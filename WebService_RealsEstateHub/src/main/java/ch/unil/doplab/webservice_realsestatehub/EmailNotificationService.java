@@ -10,11 +10,12 @@ public class EmailNotificationService {
     // Brevo (Sendinblue) API - FREE 300 emails/day
     private static final String BREVO_API_URL = "https://api.brevo.com/v3/smtp/email";
     
-    // Brevo API Key - Get it from: https://app.brevo.com/settings/keys/api
-    private static final String BREVO_API_KEY = "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";
+    // TODO: Replace with your Brevo API Key from https://app.brevo.com/settings/keys/api
+    // NEVER commit API keys to GitHub! Use environment variables in production
+    private static final String BREVO_API_KEY = "YOUR_BREVO_API_KEY_HERE";
     
-    // Set to true to use real API, false to simulate
-    private static final boolean USE_REAL_API = true;
+    // Set to false for demo (simulated), true for real emails (requires valid API key)
+    private static final boolean USE_REAL_API = false;
     
     /**
      * Send email notification when offer status changes
