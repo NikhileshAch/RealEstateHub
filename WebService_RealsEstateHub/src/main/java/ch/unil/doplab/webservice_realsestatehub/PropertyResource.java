@@ -16,6 +16,27 @@ public class PropertyResource {
     @Inject
     private ApplicationState state;
 
+    public static final Property property1 = new Property("Bel appartement au centre",UUID.randomUUID(), "Un bel appartement de 3 pièces au centre de Lausanne.","Lausanne", 520000.0, 85, Property.PropertyType.APARTMENT);
+    public static final Property property2 = new Property("Villa avec vue lac", UUID.randomUUID(),"Magnifique villa avec 5 pièces et un grand jardin.", "Pully", 1200000.0, 210, Property.PropertyType.HOUSE);
+
+    static {
+        property1.setStatus(Property.PropertyStatus.FOR_SALE);
+        property2.setStatus(Property.PropertyStatus.FOR_SALE);
+
+        // Pour 'getBathroomCount()' et 'getBedroomCount()'
+        property1.addFeature("bathrooms", 1);
+        property1.addFeature("bedrooms", 2);
+
+        property2.addFeature("bathrooms", 2);
+        property2.addFeature("bedrooms", 4);
+
+
+        properties.put(property1.getPropertyId(), property1);
+        properties.put(property2.getPropertyId(), property2);
+    }
+
+
+
     /**
      * Create a new property
      * POST /api/properties
