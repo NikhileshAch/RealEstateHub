@@ -84,7 +84,7 @@ public class EmailNotificationService {
     
     /**
      * Simulate email API call (for demo purposes)
-     * In production, this would make an actual HTTP request to EmailJS or SendGrid
+     * In production, this would make an actual HTTP request to EmailJS or SendGrids
      */
     private static boolean simulateEmailAPICall(String toEmail1, String toEmail2, 
                                                 String subject, String message) {
