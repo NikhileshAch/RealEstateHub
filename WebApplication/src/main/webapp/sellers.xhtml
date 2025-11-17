@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<h:head>
+    <title>Sellers - RealEstateHub</title>
+    <h:outputStylesheet name="css/style.css"/>
+</h:head>
+<h:body>
+    <div class="container">
+        <h1>Sellers Listing</h1>
+        
+        <div class="navigation">
+            <h:form>
+                <h:commandButton value="Home" action="index?faces-redirect=true" styleClass="btn"/>
+                <h:commandButton value="Properties" action="properties?faces-redirect=true" styleClass="btn"/>
+                <h:commandButton value="Buyers" action="buyers?faces-redirect=true" styleClass="btn"/>
+            </h:form>
+        </div>
+        
+        <h:form>
+            <h:commandButton value="Refresh" action="#{sellerBean.loadSellers()}" styleClass="btn-refresh"/>
+        </h:form>
+        
+        <h:dataTable value="#{sellerBean.sellers}" var="seller" 
+                     styleClass="data-table" headerClass="table-header" 
+                     rowClasses="table-row-odd,table-row-even">
+            
+            <h:column>
+                <f:facet name="header">First Name</f:facet>
+                #{seller.firstName}
+            </h:column>
+            
+            <h:column>
+                <f:facet name="header">Last Name</f:facet>
+                #{seller.lastName}
+            </h:column>
+            
+            <h:column>
+                <f:facet name="header">Email</f:facet>
+                #{seller.email}
+            </h:column>
+            
+            <h:column>
+                <f:facet name="header">Username</f:facet>
+                #{seller.username}
+            </h:column>
+        </h:dataTable>
+        
+        <p class="count">Total Sellers: #{sellerBean.sellers.size()}</p>
+    </div>
+</h:body>
+</html>
