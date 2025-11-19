@@ -34,6 +34,11 @@ public class ApplicationState {
         Seller demoSeller = new Seller("Demo", "Seller", "seller@demo.com", "seller", "pass789");
         sellers.put(demoSeller.getUserID(), demoSeller);
 
+        Property property1 = new Property("Bel appartement au centre",UUID.randomUUID(), "Un bel appartement de 3 pièces au centre de Lausanne.","Lausanne", 520000.0, 85, Property.PropertyType.APARTMENT);
+        Property property2 = new Property("Villa avec vue lac", UUID.randomUUID(),"Magnifique villa avec 5 pièces et un grand jardin.", "Pully", 1200000.0, 210, Property.PropertyType.HOUSE);
+        properties.put(property1.getPropertyId(), property1);
+        properties.put(property2.getPropertyId(), property2);
+
         System.out.println("ApplicationState initialized with " + buyers.size() + " buyers and " + sellers.size() + " sellers");
     }
 
