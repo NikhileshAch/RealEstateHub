@@ -54,11 +54,11 @@
                 
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="price">Price: *</label>
+                        <label for="price">Price (CHF): *</label>
                         <h:inputText id="price" value="#{propertyBean.price}" 
                                    styleClass="form-control" required="true"
                                    requiredMessage="Price is required">
-                            <f:convertNumber type="currency" currencySymbol="$" groupingUsed="false"/>
+                            <f:convertNumber groupingUsed="false"/>
                         </h:inputText>
                         <h:message for="price" styleClass="error-message"/>
                     </div>

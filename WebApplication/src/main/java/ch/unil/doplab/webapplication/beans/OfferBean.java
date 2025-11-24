@@ -319,14 +319,14 @@ public class OfferBean implements Serializable {
     }
     
     public String formatAmount(Object amount) {
-        if (amount == null) return "$0";
+        if (amount == null) return "CHF 0.00";
         try {
             if (amount instanceof Number) {
-                return String.format("$%,.2f", ((Number) amount).doubleValue());
+                return String.format("CHF %,.2f", ((Number) amount).doubleValue());
             }
-            return String.format("$%,.2f", Double.parseDouble(amount.toString()));
+            return String.format("CHF %,.2f", Double.parseDouble(amount.toString()));
         } catch (Exception e) {
-            return "$0";
+            return "CHF 0.00";
         }
     }
     

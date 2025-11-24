@@ -78,19 +78,19 @@
                     
                     <div class="filter-row">
                         <div class="form-group">
-                            <label for="minPrice">Min Price:</label>
+                            <label for="minPrice">Min Price (CHF):</label>
                             <h:inputText id="minPrice" value="#{propertyBean.minPrice}" 
                                        styleClass="form-control" placeholder="0.00">
-                                <f:convertNumber type="currency" currencySymbol="$" groupingUsed="false"/>
+                                <f:convertNumber groupingUsed="false"/>
                                 <f:ajax event="change" render="propertiesTable"/>
                             </h:inputText>
                         </div>
                         
                         <div class="form-group">
-                            <label for="maxPrice">Max Price:</label>
+                            <label for="maxPrice">Max Price (CHF):</label>
                             <h:inputText id="maxPrice" value="#{propertyBean.maxPrice}" 
                                        styleClass="form-control" placeholder="1000000.00">
-                                <f:convertNumber type="currency" currencySymbol="$" groupingUsed="false"/>
+                                <f:convertNumber groupingUsed="false"/>
                                 <f:ajax event="change" render="propertiesTable"/>
                             </h:inputText>
                         </div>

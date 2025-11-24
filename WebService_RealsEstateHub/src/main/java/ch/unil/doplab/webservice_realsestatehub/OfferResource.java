@@ -2,6 +2,7 @@ package ch.unil.doplab.webservice_realsestatehub;
 
 import ch.unil.doplab.Offer;
 import ch.unil.doplab.Buyer;
+import ch.unil.doplab.Property;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -103,6 +104,19 @@ public class OfferResource {
             Offer.Status oldStatus = offer.getStatus();
             Offer.Status newStatus = Offer.Status.valueOf(statusDto.getStatus());
             offer.setStatus(newStatus);
+            
+            // If offer is ACCEPTED, update property status to SOLD
+            if (newStatus == Offer.Status.ACCEPTED) {
+                try {
+                    Property property = state.getPropertyById(offer.getPropertyId());
+                    if (property != null) {
+                        property.setStatus(Property.PropertyStatus.SOLD);
+                        System.out.println("Property " + offer.getPropertyId() + " marked as SOLD");
+                    }
+                } catch (Exception e) {
+                    System.err.println("Error updating property status: " + e.getMessage());
+                }
+            }
             
             // Get buyer's email from ApplicationState
             String buyerEmail = "nikhilesh.acharya@unil.ch"; // Default fallback

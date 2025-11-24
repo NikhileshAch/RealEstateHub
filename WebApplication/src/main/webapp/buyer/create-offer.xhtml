@@ -39,11 +39,11 @@
                 </div>
                 
                 <div class="form-group">
-                    <label for="offerAmount">Offer Amount: *</label>
+                    <label for="offerAmount">Offer Amount (CHF): *</label>
                     <h:inputText id="offerAmount" value="#{offerBean.offerAmount}" 
                                styleClass="form-control" required="true" 
                                requiredMessage="Offer amount is required">
-                        <f:convertNumber type="currency" currencySymbol="$" groupingUsed="false"/>
+                        <f:convertNumber groupingUsed="false"/>
                         <f:validateDoubleRange minimum="1.00"/>
                     </h:inputText>
                     <h:message for="offerAmount" styleClass="error-message"/>
