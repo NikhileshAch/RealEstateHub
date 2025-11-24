@@ -16,6 +16,7 @@ public class PropertyResource {
     @Inject
     private ApplicationState state;
 
+
     /**
      * Create a new property
      * POST /api/properties
