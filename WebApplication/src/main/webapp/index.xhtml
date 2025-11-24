@@ -5,30 +5,67 @@
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:f="http://xmlns.jcp.org/jsf/core">
 <h:head>
-    <title>RealEstateHub - Home</title>
+    <title>RealEstateHub - Welcome</title>
     <h:outputStylesheet name="css/style.css"/>
 </h:head>
 <h:body>
-    <div class="container">
+    <div class="container welcome-container">
         <h1>Welcome to RealEstateHub</h1>
-        <p>Your real estate management platform</p>
+        <p class="subtitle">Your comprehensive real estate management platform</p>
         
-        <div class="menu">
-            <h:form>
-                <h:commandButton value="View Properties" action="properties?faces-redirect=true" styleClass="btn"/>
-                <h:commandButton value="View Buyers" action="buyers?faces-redirect=true" styleClass="btn"/>
-                <h:commandButton value="View Sellers" action="sellers?faces-redirect=true" styleClass="btn"/>
-            </h:form>
+        <div class="role-selection">
+            <h2>Choose Your Role</h2>
+            <div class="role-cards">
+                <div class="role-card buyer-card">
+                    <h3>I'm a Buyer</h3>
+                    <p>Browse properties, make offers, and find your dream home</p>
+                    <ul>
+                        <li>Search available properties</li>
+                        <li>Filter by location, price, type</li>
+                        <li>Make offers on properties</li>
+                        <li>Track your offers</li>
+                    </ul>
+                    <h:form>
+                        <h:commandButton value="Continue as Buyer" action="login?faces-redirect=true&amp;role=BUYER" styleClass="btn btn-primary"/>
+                    </h:form>
+                </div>
+                
+                <div class="role-card seller-card">
+                    <h3>I'm a Seller</h3>
+                    <p>List your properties and manage incoming offers</p>
+                    <ul>
+                        <li>List your properties</li>
+                        <li>Manage property details</li>
+                        <li>Review buyer offers</li>
+                        <li>Accept or reject offers</li>
+                    </ul>
+                    <h:form>
+                        <h:commandButton value="Continue as Seller" action="login?faces-redirect=true&amp;role=SELLER" styleClass="btn btn-secondary"/>
+                    </h:form>
+                </div>
+            </div>
         </div>
         
-        <div class="info">
-            <h3>Features:</h3>
-            <ul>
-                <li>Browse available properties</li>
-                <li>Manage buyers and their budgets</li>
-                <li>View sellers and their listings</li>
-                <li>Real-time data from REST API</li>
-            </ul>
+        <div class="info-section">
+            <h3>Why Choose RealEstateHub?</h3>
+            <div class="features-grid">
+                <div class="feature">
+                    <h4>🏠 Wide Selection</h4>
+                    <p>Browse through numerous properties</p>
+                </div>
+                <div class="feature">
+                    <h4>💰 Best Prices</h4>
+                    <p>Competitive pricing and negotiations</p>
+                </div>
+                <div class="feature">
+                    <h4>🔒 Secure</h4>
+                    <p>Safe and secure transactions</p>
+                </div>
+                <div class="feature">
+                    <h4>⚡ Fast</h4>
+                    <p>Quick offer processing</p>
+                </div>
+            </div>
         </div>
     </div>
 </h:body>

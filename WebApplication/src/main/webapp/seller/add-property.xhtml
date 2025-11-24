@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<h:head>
+    <title>Add Property - RealEstateHub</title>
+    <h:outputStylesheet library="css" name="style.css"/>
+</h:head>
+<h:body>
+    <f:view>
+        <div class="container">
+            <!-- Navigation Bar -->
+            <div class="navbar">
+                <div class="navbar-brand">🏠 RealEstateHub - Add Property</div>
+                <div class="navbar-user">
+                    <span class="user-info">Welcome, #{sessionBean.userFullName}!</span>
+                    <h:form>
+                        <h:commandButton value="My Properties" action="/seller/my-properties?faces-redirect=true" styleClass="btn-secondary"/>
+                        <h:commandButton value="Logout" action="#{sessionBean.logout()}" styleClass="btn-danger"/>
+                    </h:form>
+                </div>
+            </div>
+            
+            <h1>Add New Property</h1>
+            <p>List your property on RealEstateHub</p>
+            
+            <h:messages styleClass="messages"/>
+            
+            <h:form styleClass="register-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="address">Address: *</label>
+                        <h:inputText id="address" value="#{propertyBean.address}" 
+                                   styleClass="form-control" required="true"
+                                   requiredMessage="Address is required" placeholder="123 Main St"/>
+                        <h:message for="address" styleClass="error-message"/>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="propertyType">Property Type: *</label>
+                        <h:selectOneMenu id="propertyType" value="#{propertyBean.propertyType}" 
+                                       styleClass="form-control" required="true"
+                                       requiredMessage="Property type is required">
+                            <f:selectItem itemValue="" itemLabel="-- Select Type --"/>
+                            <f:selectItem itemValue="HOUSE" itemLabel="House"/>
+                            <f:selectItem itemValue="APARTMENT" itemLabel="Apartment"/>
+                            <f:selectItem itemValue="CONDO" itemLabel="Condo"/>
+                            <f:selectItem itemValue="TOWNHOUSE" itemLabel="Townhouse"/>
+                            <f:selectItem itemValue="LAND" itemLabel="Land"/>
+                        </h:selectOneMenu>
+                        <h:message for="propertyType" styleClass="error-message"/>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="price">Price: *</label>
+                        <h:inputText id="price" value="#{propertyBean.price}" 
+                                   styleClass="form-control" required="true"
+                                   requiredMessage="Price is required" placeholder="500000">
+                            <f:convertNumber type="currency" currencySymbol="$" groupingUsed="false"/>
+                        </h:inputText>
+                        <h:message for="price" styleClass="error-message"/>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="squareFootage">Square Footage: *</label>
+                        <h:inputText id="squareFootage" value="#{propertyBean.squareFootage}" 
+                                   styleClass="form-control" required="true"
+                                   requiredMessage="Square footage is required" placeholder="2500">
+                            <f:convertNumber integerOnly="true"/>
+                        </h:inputText>
+                        <h:message for="squareFootage" styleClass="error-message"/>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="bedrooms">Bedrooms: *</label>
+                        <h:inputText id="bedrooms" value="#{propertyBean.bedrooms}" 
+                                   styleClass="form-control" required="true"
+                                   requiredMessage="Bedrooms is required" placeholder="4">
+                            <f:convertNumber integerOnly="true"/>
+                        </h:inputText>
+                        <h:message for="bedrooms" styleClass="error-message"/>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="bathrooms">Bathrooms: *</label>
+                        <h:inputText id="bathrooms" value="#{propertyBean.bathrooms}" 
+                                   styleClass="form-control" required="true"
+                                   requiredMessage="Bathrooms is required" placeholder="2">
+                            <f:convertNumber integerOnly="true"/>
+                        </h:inputText>
+                        <h:message for="bathrooms" styleClass="error-message"/>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="description">Description:</label>
+                    <h:inputTextarea id="description" value="#{propertyBean.description}" 
+                                   styleClass="form-control" rows="5" cols="50"
+                                   placeholder="Describe your property in detail..."/>
+                    <h:message for="description" styleClass="error-message"/>
+                </div>
+                
+                <div class="form-group">
+                    <h3>Features</h3>
+                    <div style="display: flex; gap: 20px; margin-top: 10px;">
+                        <label>
+                            <h:selectBooleanCheckbox id="hasGarage" value="#{propertyBean.hasGarage}"/>
+                            Garage
+                        </label>
+                        <label>
+                            <h:selectBooleanCheckbox id="hasPool" value="#{propertyBean.hasPool}"/>
+                            Swimming Pool
+                        </label>
+                        <label>
+                            <h:selectBooleanCheckbox id="hasGarden" value="#{propertyBean.hasGarden}"/>
+                            Garden
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <h:commandButton value="List Property" action="#{propertyBean.addProperty()}" 
+                                   styleClass="btn btn-success"/>
+                    <h:commandButton value="Cancel" action="/seller/my-properties?faces-redirect=true" 
+                                   immediate="true" styleClass="btn-secondary"/>
+                </div>
+            </h:form>
+        </div>
+    </f:view>
+</h:body>
+</html>
