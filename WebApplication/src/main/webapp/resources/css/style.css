@@ -1,4 +1,5 @@
 /* RealEstateHub WebApp Styles - Phase 2 */
+/* Navy Blue: #1a2a4a, #2c3e5a | Gold: #c9a227, #d4af37 */
 
 * {
     margin: 0;
@@ -8,18 +9,19 @@
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #1a2a4a 0%, #2c3e5a 100%);
     min-height: 100vh;
     padding: 20px;
 }
 
 .container {
+    width: 100%;
     max-width: 1200px;
     margin: 0 auto;
     background: white;
     padding: 30px;
     border-radius: 10px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 5px 30px rgba(0, 0, 0, 0.3);
 }
 
 /* Welcome Page Styles */
@@ -58,11 +60,11 @@ body {
 }
 
 .buyer-card {
-    border-color: #667eea;
+    border-color: #c9a227;
 }
 
 .seller-card {
-    border-color: #764ba2;
+    border-color: #1a2a4a;
 }
 
 .role-card h3 {
@@ -124,8 +126,8 @@ input[type="number"], select, textarea {
 
 .form-control:focus, input:focus, select:focus, textarea:focus {
     outline: none;
-    border-color: #667eea;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    border-color: #c9a227;
+    box-shadow: 0 0 0 3px rgba(201, 162, 39, 0.1);
 }
 
 .form-actions {
@@ -157,7 +159,7 @@ input[type="number"], select, textarea {
 
 /* Buttons */
 .btn, .btn-primary, .btn-secondary, .btn-refresh, .btn-danger, .btn-success {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #1a2a4a 0%, #2c3e5a 100%);
     color: white;
     border: none;
     padding: 12px 25px;
@@ -165,30 +167,53 @@ input[type="number"], select, textarea {
     cursor: pointer;
     font-size: 14px;
     font-weight: bold;
-    transition: transform 0.2s, box-shadow 0.2s;
+    transition: all 0.3s ease;
     text-decoration: none;
     display: inline-block;
 }
 
 .btn:hover, .btn-primary:hover {
+    background: linear-gradient(135deg, #0d1a2d 0%, #1a2a4a 100%);
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 5px 15px rgba(26, 42, 74, 0.4);
+}
+
+.btn:active, .btn-primary:active {
+    background: linear-gradient(135deg, #050d15 0%, #0d1a2d 100%);
+    transform: translateY(0);
+    box-shadow: 0 2px 5px rgba(26, 42, 74, 0.4);
 }
 
 .btn-secondary {
     background: linear-gradient(135deg, #868e96 0%, #495057 100%);
 }
 
+.btn-secondary:hover {
+    background: linear-gradient(135deg, #6c757d 0%, #343a40 100%);
+}
+
 .btn-refresh {
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    background: linear-gradient(135deg, #c9a227 0%, #d4af37 100%);
+}
+
+.btn-refresh:hover {
+    background: linear-gradient(135deg, #a88a1f 0%, #b8952e 100%);
 }
 
 .btn-danger {
     background: linear-gradient(135deg, #f85032 0%, #e73827 100%);
 }
 
+.btn-danger:hover {
+    background: linear-gradient(135deg, #d63020 0%, #c42a1a 100%);
+}
+
 .btn-success {
     background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
+}
+
+.btn-success:hover {
+    background: linear-gradient(135deg, #458a26 0%, #8bc34a 100%);
 }
 
 /* Navigation */
@@ -201,9 +226,9 @@ input[type="number"], select, textarea {
 }
 
 .navbar {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    padding: 15px 30px;
-    margin: -30px -30px 30px -30px;
+    background: linear-gradient(135deg, #1a2a4a 0%, #2c3e5a 100%);
+    padding: 15px 25px;
+    margin: -30px -30px 20px -30px;
     border-radius: 10px 10px 0 0;
     display: flex;
     justify-content: space-between;
@@ -214,6 +239,7 @@ input[type="number"], select, textarea {
 .navbar-brand {
     font-size: 1.5em;
     font-weight: bold;
+    color: #c9a227;
 }
 
 .navbar-user {
@@ -235,7 +261,7 @@ input[type="number"], select, textarea {
 }
 
 .table-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #1a2a4a 0%, #2c3e5a 100%);
     color: white;
     font-weight: bold;
     padding: 15px;
@@ -342,7 +368,7 @@ input[type="number"], select, textarea {
 }
 
 .register-link a, .login-link a {
-    color: #667eea;
+    color: #c9a227;
     text-decoration: none;
     font-weight: bold;
 }
@@ -375,25 +401,25 @@ input[type="number"], select, textarea {
 .count {
     margin-top: 20px;
     font-weight: bold;
-    color: #667eea;
+    color: #1a2a4a;
     text-align: right;
 }
 
 /* Headings */
 h1 {
-    color: #333;
+    color: #1a2a4a;
     margin-bottom: 20px;
     text-align: center;
     font-size: 2.5em;
 }
 
 h2 {
-    color: #444;
+    color: #1a2a4a;
     margin-bottom: 15px;
 }
 
 h3 {
-    color: #555;
+    color: #2c3e5a;
     margin-top: 20px;
     margin-bottom: 10px;
 }
@@ -403,6 +429,215 @@ p {
     color: #666;
     margin-bottom: 30px;
 }
+
+/* ========================================
+   PrimeFaces Component Overrides
+   Navy Blue: #1a2a4a | Gold: #c9a227
+   ======================================== */
+
+/* Panel Headers - Light background with gold accent */
+.ui-panel .ui-panel-titlebar,
+.ui-fieldset .ui-fieldset-legend {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%) !important;
+    color: #1a2a4a !important;
+    border: none !important;
+    border-bottom: 3px solid #c9a227 !important;
+}
+
+.ui-panel .ui-panel-titlebar .ui-panel-title {
+    color: #1a2a4a !important;
+    font-weight: 600 !important;
+}
+
+.ui-panel .ui-panel-titlebar-icon {
+    color: #c9a227 !important;
+}
+
+.ui-panel .ui-panel-titlebar-icon:hover {
+    background: #c9a227 !important;
+    color: white !important;
+}
+
+/* DataTable Header - Light with gold accent */
+.ui-datatable .ui-datatable-header {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%) !important;
+    color: #1a2a4a !important;
+    border: none !important;
+    border-bottom: 3px solid #c9a227 !important;
+    font-weight: 600 !important;
+}
+
+.ui-datatable .ui-datatable-thead th {
+    background: #ffffff !important;
+    border-bottom: 2px solid #c9a227 !important;
+    color: #1a2a4a !important;
+    font-weight: 600 !important;
+}
+
+.ui-datatable .ui-datatable-thead th.ui-state-hover {
+    background: #e9ecef !important;
+}
+
+.ui-datatable .ui-datatable-thead th.ui-state-active {
+    background: #1a2a4a !important;
+    color: white !important;
+}
+
+.ui-datatable .ui-sortable-column-icon {
+    color: #c9a227 !important;
+}
+
+/* Paginator */
+.ui-paginator {
+    background: #f8f9fa !important;
+    border: 1px solid #ddd !important;
+}
+
+.ui-paginator .ui-paginator-page.ui-state-active {
+    background: #1a2a4a !important;
+    color: white !important;
+    border-color: #1a2a4a !important;
+}
+
+.ui-paginator .ui-paginator-page:hover,
+.ui-paginator .ui-paginator-first:hover,
+.ui-paginator .ui-paginator-prev:hover,
+.ui-paginator .ui-paginator-next:hover,
+.ui-paginator .ui-paginator-last:hover {
+    background: #c9a227 !important;
+    color: white !important;
+}
+
+/* Buttons */
+.ui-button {
+    background: linear-gradient(135deg, #1a2a4a 0%, #2c3e5a 100%) !important;
+    border: none !important;
+    color: white !important;
+    transition: all 0.3s ease !important;
+}
+
+.ui-button:hover {
+    background: linear-gradient(135deg, #0d1a2d 0%, #1a2a4a 100%) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(26, 42, 74, 0.4) !important;
+}
+
+.ui-button:active {
+    background: linear-gradient(135deg, #050d15 0%, #0d1a2d 100%) !important;
+    transform: translateY(0);
+}
+
+.ui-button.ui-button-success {
+    background: linear-gradient(135deg, #28a745 0%, #34ce57 100%) !important;
+}
+
+.ui-button.ui-button-success:hover {
+    background: linear-gradient(135deg, #1e7e34 0%, #28a745 100%) !important;
+}
+
+.ui-button.ui-button-danger {
+    background: linear-gradient(135deg, #dc3545 0%, #e4606d 100%) !important;
+}
+
+.ui-button.ui-button-danger:hover {
+    background: linear-gradient(135deg, #bd2130 0%, #dc3545 100%) !important;
+}
+
+.ui-button.ui-button-warning {
+    background: linear-gradient(135deg, #c9a227 0%, #d4af37 100%) !important;
+    color: #1a2a4a !important;
+}
+
+.ui-button.ui-button-warning:hover {
+    background: linear-gradient(135deg, #a88a1f 0%, #c9a227 100%) !important;
+}
+
+.ui-button.ui-button-secondary {
+    background: linear-gradient(135deg, #6c757d 0%, #868e96 100%) !important;
+}
+
+.ui-button.ui-button-secondary:hover {
+    background: linear-gradient(135deg, #545b62 0%, #6c757d 100%) !important;
+}
+
+.ui-button.ui-button-help {
+    background: linear-gradient(135deg, #1a2a4a 0%, #2c3e5a 100%) !important;
+}
+
+.ui-button.ui-button-help:hover {
+    background: linear-gradient(135deg, #0d1a2d 0%, #1a2a4a 100%) !important;
+}
+
+/* SelectOneMenu */
+.ui-selectonemenu {
+    border: 1px solid #ddd !important;
+}
+
+.ui-selectonemenu:hover {
+    border-color: #c9a227 !important;
+}
+
+.ui-selectonemenu.ui-state-focus {
+    border-color: #c9a227 !important;
+    box-shadow: 0 0 0 3px rgba(201, 162, 39, 0.2) !important;
+}
+
+.ui-selectonemenu-panel .ui-selectonemenu-item.ui-state-highlight {
+    background: #1a2a4a !important;
+    color: white !important;
+}
+
+.ui-selectonemenu-panel .ui-selectonemenu-item:hover {
+    background: #c9a227 !important;
+    color: white !important;
+}
+
+/* InputText */
+.ui-inputtext:focus,
+.ui-inputnumber-input:focus,
+.ui-spinner-input:focus {
+    border-color: #c9a227 !important;
+    box-shadow: 0 0 0 3px rgba(201, 162, 39, 0.2) !important;
+}
+
+/* Tags */
+.ui-tag.ui-tag-info {
+    background: #1a2a4a !important;
+}
+
+.ui-tag.ui-tag-success {
+    background: #28a745 !important;
+}
+
+.ui-tag.ui-tag-warning {
+    background: #c9a227 !important;
+    color: #1a2a4a !important;
+}
+
+.ui-tag.ui-tag-danger {
+    background: #dc3545 !important;
+}
+
+/* Growl */
+.ui-growl-item-container.ui-state-highlight {
+    background: #1a2a4a !important;
+    border-color: #c9a227 !important;
+}
+
+/* Confirm Dialog */
+.ui-confirm-dialog .ui-dialog-titlebar {
+    background: linear-gradient(135deg, #1a2a4a 0%, #2c3e5a 100%) !important;
+    color: white !important;
+}
+
+/* Password Meter */
+.ui-password-meter {
+    background: #ddd !important;
+}
+
+/* ========================================
+   Centered Card Layout
+   ======================================== */
 
 /* Responsive */
 @media (max-width: 768px) {
@@ -417,6 +652,19 @@ p {
     .navbar {
         flex-direction: column;
         gap: 15px;
+    }
+    
+    .container {
+        margin: 10px;
+        padding: 15px;
+    }
+    
+    .navbar {
+        margin: -15px -15px 15px -15px;
+    }
+    
+    body {
+        padding: 10px;
     }
 }
 

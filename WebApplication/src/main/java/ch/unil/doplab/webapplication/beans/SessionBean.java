@@ -71,19 +71,21 @@ public class SessionBean implements Serializable {
         return "Guest";
     }
     
-    public void logout() {
+    public String logout() {
         this.user = null;
         this.userRole = null;
-        // Also clear from HTTP session
+        // Also clear from HTTP session and invalidate
         try {
             FacesContext context = FacesContext.getCurrentInstance();
             if (context != null && context.getExternalContext() != null) {
                 context.getExternalContext().getSessionMap().remove("user");
                 context.getExternalContext().getSessionMap().remove("userRole");
+                context.getExternalContext().invalidateSession();
             }
         } catch (Exception e) {
             // Ignore if FacesContext not available
         }
+        return "/index?faces-redirect=true";
     }
     
     // Getters and Setters

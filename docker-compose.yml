@@ -7,6 +7,7 @@ services:
       SECURE_ADMIN: "true"
       ADMIN_USER: "admin"
       ADMIN_PASSWORD: "admin"
+      BREVO_API_KEY: "${BREVO_API_KEY}"
     ports:
       - "8080:8080"   #apps
       - "4848:4848"   #admin console

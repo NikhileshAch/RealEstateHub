@@ -1,70 +1,190 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:f="http://xmlns.jcp.org/jsf/core">
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
 <h:head>
     <title>RealEstateHub - Welcome</title>
     <h:outputStylesheet name="css/style.css"/>
+    <style>
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e8e8e8 100%);
+            min-height: 100vh;
+        }
+        .hero-section {
+            text-align: center;
+            padding: 50px 20px;
+            background: linear-gradient(135deg, #1a2a4a 0%, #2c3e5a 100%);
+            color: white;
+            border-radius: 0 0 50px 50px;
+            margin-bottom: 40px;
+        }
+        .hero-section h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            color: #c9a227;
+        }
+        .hero-section .subtitle {
+            font-size: 1.3rem;
+            opacity: 0.9;
+        }
+        .role-cards-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        .role-cards {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .role-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            width: 380px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .role-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+        }
+        .buyer-card {
+            border-top: 5px solid #c9a227;
+        }
+        .seller-card {
+            border-top: 5px solid #1a2a4a;
+        }
+        .role-card h3 {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        .role-card p {
+            color: #666;
+            margin-bottom: 20px;
+        }
+        .role-card ul {
+            list-style: none;
+            padding: 0;
+            margin-bottom: 25px;
+        }
+        .role-card ul li {
+            padding: 8px 0;
+            padding-left: 25px;
+            position: relative;
+            color: #555;
+        }
+        .role-card ul li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #c9a227;
+            font-weight: bold;
+        }
+        .features-section {
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 0 20px;
+        }
+        .features-section h3 {
+            text-align: center;
+            font-size: 1.8rem;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        .feature {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            transition: transform 0.3s;
+        }
+        .feature:hover {
+            transform: translateY(-5px);
+        }
+        .feature h4 {
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        .feature p {
+            color: #666;
+            font-size: 0.95rem;
+        }
+        .ui-button {
+            width: 100%;
+            justify-content: center;
+        }
+    </style>
 </h:head>
 <h:body>
-    <div class="container welcome-container">
-        <h1>Welcome to RealEstateHub</h1>
+    <div class="hero-section">
+        <h1>RealEstateHub</h1>
         <p class="subtitle">Your comprehensive real estate management platform</p>
-        
-        <div class="role-selection">
-            <h2>Choose Your Role</h2>
-            <div class="role-cards">
-                <div class="role-card buyer-card">
-                    <h3>I'm a Buyer</h3>
-                    <p>Browse properties, make offers, and find your dream home</p>
-                    <ul>
-                        <li>Search available properties</li>
-                        <li>Filter by location, price, type</li>
-                        <li>Make offers on properties</li>
-                        <li>Track your offers</li>
-                    </ul>
-                    <h:form>
-                        <h:commandButton value="Continue as Buyer" action="login?faces-redirect=true&amp;role=BUYER" styleClass="btn btn-primary"/>
-                    </h:form>
-                </div>
-                
-                <div class="role-card seller-card">
-                    <h3>I'm a Seller</h3>
-                    <p>List your properties and manage incoming offers</p>
-                    <ul>
-                        <li>List your properties</li>
-                        <li>Manage property details</li>
-                        <li>Review buyer offers</li>
-                        <li>Accept or reject offers</li>
-                    </ul>
-                    <h:form>
-                        <h:commandButton value="Continue as Seller" action="login?faces-redirect=true&amp;role=SELLER" styleClass="btn btn-secondary"/>
-                    </h:form>
-                </div>
+    </div>
+    
+    <div class="role-cards-container">
+        <h2 style="text-align: center; margin-bottom: 30px; color: #333;">Choose Your Role</h2>
+        <div class="role-cards">
+            <div class="role-card buyer-card">
+                <h3>I'm a Buyer</h3>
+                <p>Browse properties, make offers, and find your dream home</p>
+                <ul>
+                    <li>Search available properties</li>
+                    <li>Filter by location, price, type</li>
+                    <li>Make offers on properties</li>
+                    <li>Track your offers</li>
+                </ul>
+                <h:form>
+                    <p:button value="Continue as Buyer" outcome="login?role=BUYER"
+                            icon="pi pi-arrow-right" styleClass="ui-button-success"/>
+                </h:form>
+            </div>
+            
+            <div class="role-card seller-card">
+                <h3>I'm a Seller</h3>
+                <p>List your properties and manage incoming offers</p>
+                <ul>
+                    <li>List your properties</li>
+                    <li>Manage property details</li>
+                    <li>Review buyer offers</li>
+                    <li>Accept or reject offers</li>
+                </ul>
+                <h:form>
+                    <p:button value="Continue as Seller" outcome="login?role=SELLER"
+                            icon="pi pi-arrow-right" styleClass="ui-button-help"/>
+                </h:form>
             </div>
         </div>
-        
-        <div class="info-section">
-            <h3>Why Choose RealEstateHub?</h3>
-            <div class="features-grid">
-                <div class="feature">
-                    <h4>🏠 Wide Selection</h4>
-                    <p>Browse through numerous properties</p>
-                </div>
-                <div class="feature">
-                    <h4>💰 Best Prices</h4>
-                    <p>Competitive pricing and negotiations</p>
-                </div>
-                <div class="feature">
-                    <h4>🔒 Secure</h4>
-                    <p>Safe and secure transactions</p>
-                </div>
-                <div class="feature">
-                    <h4>⚡ Fast</h4>
-                    <p>Quick offer processing</p>
-                </div>
+    </div>
+    
+    <div class="features-section">
+        <h3>Why Choose RealEstateHub?</h3>
+        <div class="features-grid">
+            <div class="feature">
+                <h4>Wide Selection</h4>
+                <p>Browse through numerous properties</p>
+            </div>
+            <div class="feature">
+                <h4>Best Prices</h4>
+                <p>Competitive pricing in CHF</p>
+            </div>
+            <div class="feature">
+                <h4>Secure</h4>
+                <p>Safe and secure transactions</p>
+            </div>
+            <div class="feature">
+                <h4>Fast</h4>
+                <p>Quick offer processing</p>
             </div>
         </div>
     </div>

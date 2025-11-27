@@ -1,109 +1,176 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:f="http://xmlns.jcp.org/jsf/core">
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
 <h:head>
     <title>Register - RealEstateHub</title>
     <h:outputStylesheet name="css/style.css"/>
+    <style>
+        .register-card {
+            max-width: 550px;
+            margin: 30px auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .register-header {
+            background: linear-gradient(135deg, #1a2a4a 0%, #2c3e5a 100%);
+            padding: 25px;
+            text-align: center;
+            color: white;
+        }
+        .register-header h1 {
+            margin: 0;
+            font-size: 1.8rem;
+            color: #c9a227;
+        }
+        .register-header p {
+            margin: 10px 0 0;
+            opacity: 0.9;
+        }
+        .register-body {
+            padding: 25px;
+        }
+        .p-field {
+            margin-bottom: 18px;
+        }
+        .p-field label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: #333;
+        }
+        .ui-inputtext, .ui-selectonemenu {
+            width: 100% !important;
+        }
+        .ui-password {
+            width: 100% !important;
+        }
+        .ui-password input {
+            width: 100% !important;
+        }
+        .form-row {
+            display: flex;
+            gap: 15px;
+        }
+        .form-row .p-field {
+            flex: 1;
+        }
+        .register-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+        }
+        .register-actions .ui-button {
+            flex: 1;
+        }
+        .login-link {
+            text-align: center;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        .ui-selectonemenu-trigger {
+            width: 2em !important;
+        }
+        .ui-inputnumber {
+            width: 100% !important;
+        }
+    </style>
 </h:head>
 <h:body>
-    <div class="container register-container">
-        <h1>Register for RealEstateHub</h1>
+    <div class="register-card">
+        <div class="register-header">
+            <h1>Create Account</h1>
+            <p>Join RealEstateHub today</p>
+        </div>
         
-        <h:messages globalOnly="true" styleClass="messages"/>
-        
-        <h:form styleClass="register-form">
-            <div class="form-group">
-                <h:outputLabel for="role" value="Register as:*"/>
-                <h:selectOneMenu id="role" value="#{registerBean.selectedRole}" required="true" 
-                                 styleClass="form-control" requiredMessage="Please select a role">
+        <div class="register-body">
+            <p:growl id="messages" showDetail="true" life="5000"/>
+            <h:messages globalOnly="true" styleClass="messages"/>
+            
+            <h:form>
+                <div class="p-field">
+                    <label for="role">Register as *</label>
+                    <p:selectOneMenu id="role" value="#{registerBean.selectedRole}" required="true"
+                                   requiredMessage="Please select a role">
                     <f:selectItem itemValue="" itemLabel="-- Select Role --"/>
-                    <f:selectItem itemValue="BUYER" itemLabel="Buyer"/>
-                    <f:selectItem itemValue="SELLER" itemLabel="Seller"/>
-                    <f:ajax render="budgetGroup"/>
-                </h:selectOneMenu>
-                <h:message for="role" styleClass="error-message"/>
-            </div>
-            
-            <div class="form-row">
-                <div class="form-group">
-                    <h:outputLabel for="firstName" value="First Name:*"/>
-                    <h:inputText id="firstName" value="#{registerBean.firstName}" required="true" 
-                                 styleClass="form-control" requiredMessage="First name is required">
-                        <f:validateLength minimum="2" maximum="50"/>
-                    </h:inputText>
-                    <h:message for="firstName" styleClass="error-message"/>
+                    <f:selectItem itemValue="BUYER" itemLabel="Buyer - Browse and make offers"/>
+                    <f:selectItem itemValue="SELLER" itemLabel="Seller - List properties"/>
+                    </p:selectOneMenu>
+                    <p:message for="role"/>
                 </div>
                 
-                <div class="form-group">
-                    <h:outputLabel for="lastName" value="Last Name:*"/>
-                    <h:inputText id="lastName" value="#{registerBean.lastName}" required="true" 
-                                 styleClass="form-control" requiredMessage="Last name is required">
-                        <f:validateLength minimum="2" maximum="50"/>
-                    </h:inputText>
-                    <h:message for="lastName" styleClass="error-message"/>
-                </div>
-            </div>
-            
-            <div class="form-group">
-                <h:outputLabel for="email" value="Email:*"/>
-                <h:inputText id="email" value="#{registerBean.email}" required="true" 
-                             styleClass="form-control" requiredMessage="Email is required">
-                    <f:validateRegex pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}"/>
-                </h:inputText>
-                <h:message for="email" styleClass="error-message"/>
-            </div>
-            
-            <div class="form-group">
-                <h:outputLabel for="username" value="Username:*"/>
-                <h:inputText id="username" value="#{registerBean.username}" required="true" 
-                             styleClass="form-control" requiredMessage="Username is required">
-                    <f:validateLength minimum="3" maximum="30"/>
-                </h:inputText>
-                <h:message for="username" styleClass="error-message"/>
-            </div>
-            
-            <div class="form-row">
-                <div class="form-group">
-                    <h:outputLabel for="password" value="Password:*"/>
-                    <h:inputSecret id="password" value="#{registerBean.password}" required="true" 
-                                   styleClass="form-control" requiredMessage="Password is required">
-                        <f:validateLength minimum="6"/>
-                    </h:inputSecret>
-                    <h:message for="password" styleClass="error-message"/>
+                <div class="form-row">
+                    <div class="p-field">
+                        <label for="firstName">First Name *</label>
+                        <p:inputText id="firstName" value="#{registerBean.firstName}" required="true"
+                                   requiredMessage="First name is required" placeholder="John">
+                            <f:validateLength minimum="2" maximum="50"/>
+                        </p:inputText>
+                        <p:message for="firstName"/>
+                    </div>
+                    
+                    <div class="p-field">
+                        <label for="lastName">Last Name *</label>
+                        <p:inputText id="lastName" value="#{registerBean.lastName}" required="true"
+                                   requiredMessage="Last name is required" placeholder="Doe">
+                            <f:validateLength minimum="2" maximum="50"/>
+                        </p:inputText>
+                        <p:message for="lastName"/>
+                    </div>
                 </div>
                 
-                <div class="form-group">
-                    <h:outputLabel for="confirmPassword" value="Confirm Password:*"/>
-                    <h:inputSecret id="confirmPassword" value="#{registerBean.confirmPassword}" 
-                                   required="true" styleClass="form-control" 
-                                   requiredMessage="Please confirm password"/>
-                    <h:message for="confirmPassword" styleClass="error-message"/>
+                <div class="p-field">
+                    <label for="email">Email *</label>
+                    <p:inputText id="email" value="#{registerBean.email}" required="true"
+                               requiredMessage="Email is required" placeholder="john.doe@example.com">
+                        <f:validateRegex pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}"/>
+                    </p:inputText>
+                    <p:message for="email"/>
                 </div>
-            </div>
-            
-            <h:panelGroup id="budgetGroup">
-                <div class="form-group" rendered="#{registerBean.selectedRole == 'BUYER'}">
-                    <h:outputLabel for="budget" value="Budget (CHF):*"/>
-                    <h:inputText id="budget" value="#{registerBean.budget}" required="#{registerBean.selectedRole == 'BUYER'}" 
-                                 styleClass="form-control" requiredMessage="Budget is required for buyers">
-                        <f:validateDoubleRange minimum="0.01"/>
-                        <f:convertNumber type="currency" currencySymbol="CHF" maxFractionDigits="2"/>
-                    </h:inputText>
-                    <h:message for="budget" styleClass="error-message"/>
+                
+                <div class="p-field">
+                    <label for="username">Username *</label>
+                    <p:inputText id="username" value="#{registerBean.username}" required="true"
+                               requiredMessage="Username is required" placeholder="johndoe">
+                        <f:validateLength minimum="3" maximum="30"/>
+                    </p:inputText>
+                    <p:message for="username"/>
                 </div>
-            </h:panelGroup>
+                
+                <div class="form-row">
+                    <div class="p-field">
+                        <label for="password">Password *</label>
+                        <p:password id="password" value="#{registerBean.password}" required="true"
+                                  requiredMessage="Password is required" feedback="true" toggleMask="true">
+                            <f:validateLength minimum="6"/>
+                        </p:password>
+                        <p:message for="password"/>
+                    </div>
+                    
+                    <div class="p-field">
+                        <label for="confirmPassword">Confirm Password *</label>
+                        <p:password id="confirmPassword" value="#{registerBean.confirmPassword}"
+                                  required="true" requiredMessage="Please confirm password" 
+                                  feedback="false" toggleMask="true"/>
+                        <p:message for="confirmPassword"/>
+                    </div>
+                </div>
+                
+                <div class="register-actions">
+                    <p:commandButton value="Register" action="#{registerBean.register}" 
+                                   icon="pi pi-user-plus" styleClass="ui-button-success"/>
+                    <p:button value="Cancel" outcome="index" icon="pi pi-times" 
+                            styleClass="ui-button-secondary"/>
+                </div>
+            </h:form>
             
-            <div class="form-actions">
-                <h:commandButton value="Register" action="#{registerBean.register}" styleClass="btn btn-primary"/>
-                <h:button value="Cancel" outcome="index" styleClass="btn btn-secondary"/>
+            <div class="login-link">
+                <p>Already have an account? <h:link outcome="login" value="Login here" style="color: #c9a227; font-weight: bold;"/></p>
             </div>
-        </h:form>
-        
-        <div class="login-link">
-            <p>Already have an account? <h:link outcome="login" value="Login here"/></p>
         </div>
     </div>
 </h:body>

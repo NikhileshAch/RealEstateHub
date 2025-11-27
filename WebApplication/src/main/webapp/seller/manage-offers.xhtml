@@ -1,110 +1,139 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:f="http://xmlns.jcp.org/jsf/core">
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
 <h:head>
     <title>Manage Offers - RealEstateHub</title>
     <h:outputStylesheet library="css" name="style.css"/>
+    <style>
+        .ui-selectonemenu {
+            width: 200px !important;
+        }
+        .filter-card {
+            margin-bottom: 20px;
+        }
+        .p-field {
+            margin-bottom: 15px;
+        }
+        .p-field label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #1a2a4a;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+            justify-content: center;
+        }
+        .content-wrapper {
+            padding: 20px 40px;
+        }
+    </style>
 </h:head>
 <h:body>
     <f:metadata>
         <f:viewAction action="#{offerBean.loadAllOffersForSeller()}"/>
     </f:metadata>
     
-    <f:view>
-        <div class="container">
-            <!-- Navigation Bar -->
-            <div class="navbar">
-                <div class="navbar-brand">🏠 RealEstateHub - Manage Offers</div>
-                <div class="navbar-user">
-                    <span class="user-info">Welcome, #{sessionBean.userFullName}!</span>
-                    <h:form>
-                        <h:commandButton value="My Properties" action="/seller/my-properties?faces-redirect=true" styleClass="btn-secondary"/>
-                        <h:commandButton value="Logout" action="#{sessionBean.logout()}" styleClass="btn-danger"/>
-                    </h:form>
-                </div>
+    <div class="container">
+        <!-- Navigation Bar -->
+        <div class="navbar">
+            <div class="navbar-brand">RealEstateHub - Manage Offers</div>
+            <div class="navbar-user">
+                <span class="user-info">Welcome, #{sessionBean.userFullName}!</span>
+                <h:form>
+                    <p:commandButton value="My Properties" action="/seller/my-properties?faces-redirect=true" 
+                                   icon="pi pi-list" styleClass="ui-button-secondary"/>
+                    <p:commandButton value="Logout" action="#{sessionBean.logout()}" 
+                                   icon="pi pi-sign-out" styleClass="ui-button-danger" ajax="false"/>
+                </h:form>
             </div>
-            
-            <h1>Manage Offers</h1>
-            <p>Review and respond to buyer offers</p>
-            
-            <h:messages styleClass="messages" globalOnly="true"/>
-            
+        </div>
+        
+        <h1>Manage Offers</h1>
+        <p>Review and respond to buyer offers</p>
+        
+        <p:growl id="messages" showDetail="true" life="3000"/>
+        
+        <h:form id="mainForm">
             <!-- Filter Panel -->
-            <h:form id="filterForm">
-                <div class="filter-panel">
-                    <label for="filterStatus">Filter by Status:</label>
-                    <h:selectOneMenu id="filterStatus" value="#{offerBean.filterStatus}" 
-                                   styleClass="form-control">
+            <p:panel header="Filter Offers" toggleable="true" styleClass="filter-card">
+                <div class="p-field">
+                    <label for="filterStatus">Filter by Status</label>
+                    <p:selectOneMenu id="filterStatus" value="#{offerBean.filterStatus}">
                         <f:selectItem itemValue="" itemLabel="All Status"/>
                         <f:selectItem itemValue="PENDING" itemLabel="Pending"/>
                         <f:selectItem itemValue="ACCEPTED" itemLabel="Accepted"/>
                         <f:selectItem itemValue="REJECTED" itemLabel="Rejected"/>
-                        <f:ajax event="change" render="offersTable"/>
-                    </h:selectOneMenu>
+                        <p:ajax event="change" update="offersPanel"/>
+                    </p:selectOneMenu>
                 </div>
-            </h:form>
+            </p:panel>
             
-            <!-- Offers Table -->
-            <h:form id="offersTable">
-                <p class="count">Total Offers: #{offerBean.filteredOffers.size()}</p>
-                
-                <h:dataTable value="#{offerBean.filteredOffers}" var="offer" 
-                           styleClass="data-table"
-                           headerClass="table-header"
-                           rowClasses="table-row-odd,table-row-even"
-                           rendered="#{not empty offerBean.filteredOffers}">
+            <!-- Offers DataTable -->
+            <p:panel id="offersPanel" header="Offers Received (#{offerBean.filteredOffers.size()})">
+                <p:dataTable id="offersTable" value="#{offerBean.filteredOffers}" var="offer"
+                           paginator="true" rows="10" rowsPerPageTemplate="5,10,20"
+                           paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                           currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords}"
+                           emptyMessage="No offers to review at this time."
+                           rowHover="true" stripedRows="true"
+                           resizableColumns="true" reflow="true">
                     
-                    <h:column>
-                        <f:facet name="header">Property</f:facet>
-                        #{offerBean.getPropertyAddress(offer.propertyId)}
-                    </h:column>
+                    <p:column headerText="Property" sortBy="#{offer.propertyId}">
+                        <h:outputText value="#{offerBean.getPropertyAddress(offer.propertyId)}"/>
+                    </p:column>
                     
-                    <h:column>
-                        <f:facet name="header">Buyer</f:facet>
-                        #{offerBean.getBuyerName(offer.buyerId)}
-                    </h:column>
+                    <p:column headerText="Buyer" sortBy="#{offer.buyerId}">
+                        <h:outputText value="#{offerBean.getBuyerName(offer.buyerId)}"/>
+                    </p:column>
                     
-                    <h:column>
-                        <f:facet name="header">Offer Amount</f:facet>
-                        #{offerBean.formatAmount(offer.amount)}
-                    </h:column>
+                    <p:column headerText="Offer Amount" sortBy="#{offer.amount}">
+                        <h:outputText value="#{offerBean.formatAmount(offer.amount)}" style="font-weight: bold; color: #28a745;"/>
+                    </p:column>
                     
-                    <h:column>
-                        <f:facet name="header">Submitted</f:facet>
-                        #{offer.createdAt != null ? offer.createdAt : 'N/A'}
-                    </h:column>
+                    <p:column headerText="Submitted" sortBy="#{offer.createdAt}">
+                        <h:outputText value="#{offer.createdAt != null ? offer.createdAt : 'N/A'}"/>
+                    </p:column>
                     
-                    <h:column>
-                        <f:facet name="header">Status</f:facet>
-                        <span class="status-#{offer.status}">#{offer.status}</span>
-                    </h:column>
+                    <p:column headerText="Status" sortBy="#{offer.status}">
+                        <p:tag value="#{offer.status}" 
+                              severity="#{offer.status == 'ACCEPTED' ? 'success' : (offer.status == 'PENDING' ? 'warning' : 'danger')}"/>
+                    </p:column>
                     
-                    <h:column>
-                        <f:facet name="header">Actions</f:facet>
+                    <p:column headerText="Actions" style="text-align: center; width: 200px;">
                         <h:panelGroup rendered="#{offer.status == 'PENDING'}">
-                            <div style="display: flex; gap: 5px;">
-                                <h:commandButton value="✓ Accept" 
+                            <div class="action-buttons">
+                                <p:commandButton value="Accept" icon="pi pi-check"
                                                action="#{offerBean.acceptOffer(offer.offerId)}"
-                                               styleClass="btn-success" style="margin: 0; padding: 5px 10px;"/>
-                                <h:commandButton value="✕ Reject" 
+                                               update="@form messages" styleClass="ui-button-success">
+                                    <p:confirm header="Accept Offer" message="Are you sure you want to accept this offer? The property will be marked as SOLD." icon="pi pi-check-circle"/>
+                                </p:commandButton>
+                                <p:commandButton value="Reject" icon="pi pi-times"
                                                action="#{offerBean.rejectOffer(offer.offerId)}"
-                                               styleClass="btn-danger" style="margin: 0; padding: 5px 10px;"/>
+                                               update="@form messages" styleClass="ui-button-danger">
+                                    <p:confirm header="Reject Offer" message="Are you sure you want to reject this offer?" icon="pi pi-exclamation-triangle"/>
+                                </p:commandButton>
                             </div>
                         </h:panelGroup>
                         <h:panelGroup rendered="#{offer.status != 'PENDING'}">
                             <span style="color: #999; font-style: italic;">-</span>
                         </h:panelGroup>
-                    </h:column>
-                </h:dataTable>
+                    </p:column>
+                </p:dataTable>
                 
-                <h:panelGroup rendered="#{empty offerBean.filteredOffers}">
-                    <div style="text-align: center; padding: 40px; background: #f5f5f5; border-radius: 5px;">
-                        <p style="color: #999;">No offers to review at this time.</p>
-                    </div>
-                </h:panelGroup>
-            </h:form>
-        </div>
-    </f:view>
+                <p:panel rendered="#{empty offerBean.filteredOffers}" style="text-align: center; padding: 40px;">
+                    <p style="color: #999;">No offers to review at this time.</p>
+                </p:panel>
+            </p:panel>
+            
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check"/>
+                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="pi pi-times"/>
+            </p:confirmDialog>
+        </h:form>
+    </div>
 </h:body>
 </html>

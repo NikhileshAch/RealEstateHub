@@ -1,68 +1,152 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:f="http://xmlns.jcp.org/jsf/core">
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
 <h:head>
     <title>Login - RealEstateHub</title>
     <h:outputStylesheet name="css/style.css"/>
+    <style>
+        .login-card {
+            max-width: 450px;
+            margin: 50px auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .login-header {
+            background: linear-gradient(135deg, #1a2a4a 0%, #2c3e5a 100%);
+            padding: 30px;
+            text-align: center;
+            color: white;
+        }
+        .login-header h1 {
+            margin: 0;
+            font-size: 2rem;
+            color: #c9a227;
+        }
+        .login-header p {
+            margin: 10px 0 0;
+            opacity: 0.9;
+        }
+        .login-body {
+            padding: 30px;
+        }
+        .p-field {
+            margin-bottom: 20px;
+        }
+        .p-field label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        .ui-inputtext, .ui-selectonemenu {
+            width: 100% !important;
+        }
+        .ui-password {
+            width: 100% !important;
+        }
+        .ui-password input {
+            width: 100% !important;
+        }
+        .login-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+        }
+        .login-actions .ui-button {
+            flex: 1;
+        }
+        .register-link {
+            text-align: center;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        .demo-box {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+        .demo-box h4 {
+            margin: 0 0 10px;
+            color: #1a2a4a;
+        }
+        .demo-box p {
+            margin: 5px 0;
+            font-size: 0.9rem;
+        }
+        .ui-selectonemenu-trigger {
+            width: 2em !important;
+        }
+    </style>
 </h:head>
 <h:body>
-    <div class="container login-container">
-        <h1>Login to RealEstateHub</h1>
+    <f:metadata>
+        <f:viewParam name="role" value="#{loginBean.selectedRole}"/>
+    </f:metadata>
+    
+    <div class="login-card">
+        <div class="login-header">
+            <h1>RealEstateHub</h1>
+            <p>Sign in to your account</p>
+        </div>
         
-        <f:metadata>
-            <f:viewParam name="role" value="#{loginBean.selectedRole}"/>
-        </f:metadata>
-        
-        <h:messages globalOnly="true" styleClass="messages"/>
-        
-        <h:form styleClass="login-form">
-            <div class="form-group">
-                <h:outputLabel for="role" value="Login as:"/>
-                <h:selectOneMenu id="role" value="#{loginBean.selectedRole}" required="true" 
-                                 styleClass="form-control" requiredMessage="Please select a role">
+        <div class="login-body">
+            <p:growl id="messages" showDetail="true" life="5000"/>
+            <h:messages globalOnly="true" styleClass="messages"/>
+            
+            <h:form>
+                <div class="p-field">
+                    <label for="role">Login as</label>
+                    <p:selectOneMenu id="role" value="#{loginBean.selectedRole}" required="true"
+                                   requiredMessage="Please select a role">
                     <f:selectItem itemValue="" itemLabel="-- Select Role --"/>
                     <f:selectItem itemValue="BUYER" itemLabel="Buyer"/>
                     <f:selectItem itemValue="SELLER" itemLabel="Seller"/>
-                </h:selectOneMenu>
-                <h:message for="role" styleClass="error-message"/>
+                    </p:selectOneMenu>
+                    <p:message for="role"/>
+                </div>
+                
+                <div class="p-field">
+                    <label for="email">Email</label>
+                    <p:inputText id="email" value="#{loginBean.email}" required="true"
+                               requiredMessage="Email is required" placeholder="your.email@example.com">
+                        <f:validateLength minimum="3" maximum="100"/>
+                    </p:inputText>
+                    <p:message for="email"/>
+                </div>
+                
+                <div class="p-field">
+                    <label for="password">Password</label>
+                    <p:password id="password" value="#{loginBean.password}" required="true"
+                              requiredMessage="Password is required" feedback="false" toggleMask="true">
+                        <f:validateLength minimum="3"/>
+                    </p:password>
+                    <p:message for="password"/>
+                </div>
+                
+                <div class="login-actions">
+                    <p:commandButton value="Login" action="#{loginBean.login}" 
+                                   icon="pi pi-sign-in" styleClass="ui-button-success"/>
+                    <p:button value="Back" outcome="index" icon="pi pi-arrow-left" 
+                            styleClass="ui-button-secondary"/>
+                </div>
+            </h:form>
+            
+            <div class="register-link">
+                <p>Don't have an account? <h:link outcome="register" value="Register here" style="color: #c9a227; font-weight: bold;"/></p>
             </div>
             
-            <div class="form-group">
-                <h:outputLabel for="email" value="Email:"/>
-                <h:inputText id="email" value="#{loginBean.email}" required="true" 
-                             styleClass="form-control" requiredMessage="Email is required">
-                    <f:validateLength minimum="3" maximum="100"/>
-                </h:inputText>
-                <h:message for="email" styleClass="error-message"/>
+            <div class="demo-box">
+                <h4>Demo Credentials</h4>
+                <p><strong>Buyer:</strong> alice@demo.com / pass123</p>
+                <p><strong>Buyer:</strong> jonathan.grossrieder@unil.ch / pass456</p>
+                <p><strong>Seller:</strong> seller@demo.com / pass789</p>
             </div>
-            
-            <div class="form-group">
-                <h:outputLabel for="password" value="Password:"/>
-                <h:inputSecret id="password" value="#{loginBean.password}" required="true" 
-                               styleClass="form-control" requiredMessage="Password is required">
-                    <f:validateLength minimum="3"/>
-                </h:inputSecret>
-                <h:message for="password" styleClass="error-message"/>
-            </div>
-            
-            <div class="form-actions">
-                <h:commandButton value="Login" action="#{loginBean.login}" styleClass="btn btn-primary"/>
-                <h:button value="Back" outcome="index" styleClass="btn btn-secondary"/>
-            </div>
-        </h:form>
-        
-        <div class="register-link">
-            <p>Don't have an account? <h:link outcome="register" value="Register here"/></p>
-        </div>
-        
-        <div class="demo-credentials">
-            <h4>Demo Credentials:</h4>
-            <p><strong>Buyer:</strong> alice@demo.com / pass123</p>
-            <p><strong>Buyer:</strong> jonathan.grossrieder@unil.ch / pass456</p>
-            <p><strong>Seller:</strong> seller@demo.com / pass789</p>
         </div>
     </div>
 </h:body>
