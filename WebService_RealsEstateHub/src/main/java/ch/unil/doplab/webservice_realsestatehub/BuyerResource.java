@@ -24,16 +24,14 @@ public class BuyerResource {
     public Response createBuyer(BuyerDTO dto) {
         try {
             // Validation simple
-            if (dto.getBudget() <= 0) {
-                return Response.status(Response.Status.BAD_REQUEST)
-                        .entity(new ErrorResponse("Budget must be positive"))
-                        .build();
-            }
             if (dto.getEmail() == null || dto.getEmail().isEmpty()) {
                 return Response.status(Response.Status.BAD_REQUEST)
                         .entity(new ErrorResponse("Email is required"))
                         .build();
             }
+            
+            // Budget is optional - default to 0 if not provided
+            double budget = dto.getBudget() > 0 ? dto.getBudget() : 0;
 
             Buyer buyer = new Buyer(
                     dto.getFirstName(),
@@ -41,7 +39,7 @@ public class BuyerResource {
                     dto.getEmail(),
                     dto.getUsername(),
                     dto.getPassword(),
-                    dto.getBudget()
+                    budget
             );
 
             state.getBuyers().put(buyer.getUserID(), buyer);

@@ -126,10 +126,7 @@ public class RegisterBean implements Serializable {
             addMessage(FacesMessage.SEVERITY_ERROR, "Error", "Please select a role");
             return false;
         }
-        if ("BUYER".equals(selectedRole) && (budget == null || budget <= 0)) {
-            addMessage(FacesMessage.SEVERITY_ERROR, "Error", "Budget is required for buyers and must be positive");
-            return false;
-        }
+        // Budget is optional - removed validation
         return true;
     }
     
