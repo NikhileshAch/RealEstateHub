@@ -65,8 +65,18 @@ public class PropertyBean implements Serializable {
         try {
             Client client = ClientBuilder.newClient();
             WebTarget target = client.target(API_URL);
-            properties = target.request(MediaType.APPLICATION_JSON)
+            List<Map<String, Object>> allProperties = target.request(MediaType.APPLICATION_JSON)
                     .get(new GenericType<List<Map<String, Object>>>() {});
+            
+            // Filter to only show FOR_SALE properties for buyers
+            properties = new ArrayList<>();
+            for (Map<String, Object> prop : allProperties) {
+                Object status = prop.get("status");
+                if (status != null && "FOR_SALE".equals(status.toString())) {
+                    properties.add(prop);
+                }
+            }
+            
             client.close();
         } catch (Exception e) {
             System.err.println("Error loading properties: " + e.getMessage());

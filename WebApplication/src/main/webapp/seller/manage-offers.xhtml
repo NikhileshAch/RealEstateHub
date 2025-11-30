@@ -60,15 +60,18 @@
         <h:form id="mainForm">
             <!-- Filter Panel -->
             <p:panel header="Filter Offers" toggleable="true" styleClass="filter-card">
-                <div class="p-field">
-                    <label for="filterStatus">Filter by Status</label>
-                    <p:selectOneMenu id="filterStatus" value="#{offerBean.filterStatus}">
-                        <f:selectItem itemValue="" itemLabel="All Status"/>
-                        <f:selectItem itemValue="PENDING" itemLabel="Pending"/>
-                        <f:selectItem itemValue="ACCEPTED" itemLabel="Accepted"/>
-                        <f:selectItem itemValue="REJECTED" itemLabel="Rejected"/>
-                        <p:ajax event="change" update="offersPanel"/>
-                    </p:selectOneMenu>
+                <div style="display: flex; gap: 15px; align-items: flex-end; flex-wrap: wrap;">
+                    <div class="p-field" style="margin-bottom: 0;">
+                        <label for="filterStatus">Filter by Status</label>
+                        <p:selectOneMenu id="filterStatus" value="#{offerBean.filterStatus}">
+                            <f:selectItem itemValue="" itemLabel="All Status"/>
+                            <f:selectItem itemValue="PENDING" itemLabel="Pending"/>
+                            <f:selectItem itemValue="ACCEPTED" itemLabel="Accepted"/>
+                            <f:selectItem itemValue="REJECTED" itemLabel="Rejected"/>
+                        </p:selectOneMenu>
+                    </div>
+                    <p:commandButton value="Apply Filters" icon="pi pi-search"
+                                   update="offersPanel" styleClass="ui-button-primary"/>
                 </div>
             </p:panel>
             

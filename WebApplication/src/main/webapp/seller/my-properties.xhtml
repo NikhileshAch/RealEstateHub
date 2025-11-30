@@ -63,7 +63,7 @@
             <!-- Filter Panel with PrimeFaces -->
             <p:panel header="Filter Properties" toggleable="true" styleClass="filter-card">
                 <div class="p-grid p-fluid">
-                    <div class="p-col-12 p-md-4">
+                    <div class="p-col-12 p-md-3">
                         <div class="p-field">
                             <label for="filterStatus">Status</label>
                             <p:selectOneMenu id="filterStatus" value="#{propertyBean.filterStatus}">
@@ -72,12 +72,11 @@
                                 <f:selectItem itemValue="PENDING" itemLabel="Pending"/>
                                 <f:selectItem itemValue="SOLD" itemLabel="Sold"/>
                                 <f:selectItem itemValue="OFF_MARKET" itemLabel="Off Market"/>
-                                <p:ajax event="change" listener="#{propertyBean.loadMyProperties()}" update="propertiesPanel"/>
                             </p:selectOneMenu>
                         </div>
                     </div>
                     
-                    <div class="p-col-12 p-md-4">
+                    <div class="p-col-12 p-md-3">
                         <div class="p-field">
                             <label for="filterType">Property Type</label>
                             <p:selectOneMenu id="filterType" value="#{propertyBean.filterType}" filter="true" filterMatchMode="contains">
@@ -87,17 +86,20 @@
                                 <f:selectItem itemValue="CONDO" itemLabel="Condo"/>
                                 <f:selectItem itemValue="TOWNHOUSE" itemLabel="Townhouse"/>
                                 <f:selectItem itemValue="LAND" itemLabel="Land"/>
-                                <p:ajax event="change" listener="#{propertyBean.loadMyProperties()}" update="propertiesPanel"/>
                             </p:selectOneMenu>
                         </div>
                     </div>
                     
-                    <div class="p-col-12 p-md-4">
+                    <div class="p-col-12 p-md-6">
                         <div class="p-field">
                             <label>&#160;</label>
-                            <p:commandButton value="Clear Filters" icon="pi pi-filter-slash"
-                                           action="#{propertyBean.clearFilters()}" 
-                                           update="@form" styleClass="ui-button-warning"/>
+                            <div style="display: flex; gap: 10px;">
+                                <p:commandButton value="Apply Filters" icon="pi pi-search"
+                                               update="propertiesPanel" styleClass="ui-button-primary"/>
+                                <p:commandButton value="Clear" icon="pi pi-filter-slash"
+                                               action="#{propertyBean.clearFilters()}" 
+                                               update="@form" styleClass="ui-button-warning"/>
+                            </div>
                         </div>
                     </div>
                 </div>
