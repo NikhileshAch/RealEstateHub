@@ -12,7 +12,7 @@ public class Property {
         STUDIO,
         LOFT,
         TOWNHOUSE,
-        LAND,
+        CONDO,
         COMMERCIAL,
         OFFICE,
         OTHER

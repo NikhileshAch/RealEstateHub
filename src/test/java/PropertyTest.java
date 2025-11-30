@@ -258,7 +258,7 @@ class PropertyTest {
         assertNotNull(Property.PropertyType.STUDIO);
         assertNotNull(Property.PropertyType.LOFT);
         assertNotNull(Property.PropertyType.TOWNHOUSE);
-        assertNotNull(Property.PropertyType.LAND);
+        assertNotNull(Property.PropertyType.CONDO);
         assertNotNull(Property.PropertyType.COMMERCIAL);
         assertNotNull(Property.PropertyType.OFFICE);
         assertNotNull(Property.PropertyType.OTHER);
