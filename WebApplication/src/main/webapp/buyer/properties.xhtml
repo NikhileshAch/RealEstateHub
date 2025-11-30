@@ -173,15 +173,15 @@
                            rowHover="true" stripedRows="true"
                            resizableColumns="true" reflow="true">
                     
-                    <p:column headerText="Location" sortBy="#{property.location}" filterBy="#{property.location}">
+                    <p:column headerText="Location">
                         <h:outputText value="#{property.location}"/>
                     </p:column>
                     
-                    <p:column headerText="Price" sortBy="#{property.price}">
+                    <p:column headerText="Price">
                         <h:outputText value="#{propertyBean.formatPrice(property.price)}" style="font-weight: bold; color: #28a745;"/>
                     </p:column>
                     
-                    <p:column headerText="Type" sortBy="#{property.type}">
+                    <p:column headerText="Type">
                         <p:tag value="#{property.type}" severity="info"/>
                     </p:column>
                     
@@ -189,11 +189,11 @@
                         <span>#{property.features['bedrooms']} / #{property.features['bathrooms']}</span>
                     </p:column>
                     
-                    <p:column headerText="Size" sortBy="#{property.size}">
+                    <p:column headerText="Size">
                         <h:outputText value="#{property.size} sqm"/>
                     </p:column>
                     
-                    <p:column headerText="Status" sortBy="#{property.status}">
+                    <p:column headerText="Status">
                         <p:tag value="#{property.status}" 
                               severity="#{property.status == 'FOR_SALE' ? 'success' : (property.status == 'PENDING' ? 'warning' : 'danger')}"/>
                     </p:column>

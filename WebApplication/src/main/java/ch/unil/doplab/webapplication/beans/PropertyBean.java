@@ -246,17 +246,24 @@ public class PropertyBean implements Serializable {
             });
         }
         
-        // Apply sorting
+        // Apply sorting (descending - highest/largest first)
         if (sortBy != null && !sortBy.isEmpty()) {
             filtered.sort((p1, p2) -> {
                 Object val1 = p1.get(sortBy);
                 Object val2 = p2.get(sortBy);
                 
+                // Handle null values - put nulls at the end
+                if (val1 == null && val2 == null) return 0;
+                if (val1 == null) return 1;
+                if (val2 == null) return -1;
+                
                 if (val1 instanceof Number && val2 instanceof Number) {
-                    return Double.compare(((Number) val1).doubleValue(), ((Number) val2).doubleValue());
+                    // Descending order (highest first)
+                    return Double.compare(((Number) val2).doubleValue(), ((Number) val1).doubleValue());
                 }
                 
-                return 0;
+                // Fallback to string comparison (descending)
+                return val2.toString().compareTo(val1.toString());
             });
         }
         
