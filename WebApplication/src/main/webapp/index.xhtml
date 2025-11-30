@@ -7,17 +7,54 @@
     <title>RealEstateHub - Welcome</title>
     <h:outputStylesheet name="css/style.css"/>
     <style>
+        /* Styles existants conservés ou adaptés */
         body {
-            background: linear-gradient(135deg, #f5f7fa 0%, #e8e8e8 100%);
+            /* On enlève le background gradient car on a la vidéo */
+            /* background: linear-gradient(135deg, #f5f7fa 0%, #e8e8e8 100%); */
             min-height: 100vh;
+            margin: 0; /* Important pour la vidéo plein écran */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
+
+        /* --- NOUVEAU CSS POUR LA VIDÉO D'ARRIÈRE-PLAN --- */
+        .video-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -100; /* Place la vidéo tout au fond */
+        }
+
+        .bg-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Couvre tout l'écran sans déformation */
+        }
+
+        .video-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(16, 42, 67, 0.6); /* Calque bleu nuit semi-transparent plus foncé */
+            z-index: -99; /* Juste au-dessus de la vidéo */
+        }
+
+        /* --- FIN DU CSS VIDÉO --- */
+
+        /* Adaptation des styles existants pour la transparence */
         .hero-section {
             text-align: center;
             padding: 50px 20px;
-            background: linear-gradient(135deg, #1a2a4a 0%, #2c3e5a 100%);
+            /* Fond semi-transparent pour voir la vidéo à travers ou gardez le gradient si vous préférez */
+            background: rgba(26, 42, 74, 0.85);
             color: white;
             border-radius: 0 0 50px 50px;
             margin-bottom: 40px;
+            backdrop-filter: blur(5px); /* Effet de flou moderne */
         }
         .hero-section h1 {
             font-size: 3rem;
@@ -28,55 +65,67 @@
             font-size: 1.3rem;
             opacity: 0.9;
         }
+
         .role-cards-container {
             max-width: 900px;
             margin: 0 auto;
             padding: 0 20px;
         }
+
         .role-cards {
             display: flex;
             gap: 30px;
             justify-content: center;
             flex-wrap: wrap;
         }
+
         .role-card {
-            background: white;
+            background: rgba(255, 255, 255, 0.95); /* Blanc presque opaque */
             border-radius: 20px;
             padding: 30px;
             width: 380px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
             transition: transform 0.3s, box-shadow 0.3s;
+            backdrop-filter: blur(10px);
         }
+
         .role-card:hover {
             transform: translateY(-10px);
-            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
         }
+
         .buyer-card {
             border-top: 5px solid #c9a227;
         }
+
         .seller-card {
             border-top: 5px solid #1a2a4a;
         }
+
         .role-card h3 {
             font-size: 1.8rem;
             margin-bottom: 15px;
             color: #333;
         }
+
         .role-card p {
-            color: #666;
+            color: #555;
             margin-bottom: 20px;
         }
+
         .role-card ul {
             list-style: none;
             padding: 0;
             margin-bottom: 25px;
         }
+
         .role-card ul li {
             padding: 8px 0;
             padding-left: 25px;
             position: relative;
-            color: #555;
+            color: #444;
         }
+
         .role-card ul li::before {
             content: "✓";
             position: absolute;
@@ -84,59 +133,81 @@
             color: #c9a227;
             font-weight: bold;
         }
+
         .features-section {
             max-width: 900px;
             margin: 50px auto;
             padding: 0 20px;
         }
+
         .features-section h3 {
             text-align: center;
             font-size: 1.8rem;
-            color: #333;
+            color: white; /* Changé en blanc pour la lisibilité sur vidéo */
             margin-bottom: 30px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
         }
+
         .features-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 20px;
         }
+
         .feature {
-            background: white;
+            background: rgba(255, 255, 255, 0.9);
             border-radius: 15px;
             padding: 25px;
             text-align: center;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             transition: transform 0.3s;
+            backdrop-filter: blur(5px);
         }
+
         .feature:hover {
             transform: translateY(-5px);
         }
+
         .feature h4 {
             font-size: 1.1rem;
             margin-bottom: 10px;
             color: #333;
         }
+
         .feature p {
             color: #666;
             font-size: 0.95rem;
         }
+
         .ui-button {
             width: 100%;
             justify-content: center;
         }
+
+        h2 {
+            color: white !important; /* Force le titre en blanc */
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
     </style>
 </h:head>
 <h:body>
+    <div class="video-container">
+        <div class="video-overlay"></div>
+
+        <video autoplay="autoplay" loop="loop" muted="muted" playsinline="playsinline" class="bg-video">
+            <source src="#{request.contextPath}/resources/videos/background.mp4" type="video/mp4" />
+        </video>
+    </div>
     <div class="hero-section">
         <h1>RealEstateHub</h1>
         <p class="subtitle">Your comprehensive real estate management platform</p>
     </div>
-    
+
     <div class="role-cards-container">
-        <h2 style="text-align: center; margin-bottom: 30px; color: #333;">Choose Your Role</h2>
+        <h2 style="text-align: center; margin-bottom: 30px;">Choose Your Role</h2>
         <div class="role-cards">
             <div class="role-card buyer-card">
-                <h3>I'm a Buyer</h3>
+                <h3 style="text-align: center;"> I'm a Buyer</h3>
                 <p>Browse properties, make offers, and find your dream home</p>
                 <ul>
                     <li>Search available properties</li>
@@ -146,12 +217,12 @@
                 </ul>
                 <h:form>
                     <p:button value="Continue as Buyer" outcome="login?role=BUYER"
-                            icon="pi pi-arrow-right" styleClass="ui-button-success"/>
+                              icon="pi pi-arrow-right" styleClass="ui-button-success"/>
                 </h:form>
             </div>
-            
+
             <div class="role-card seller-card">
-                <h3>I'm a Seller</h3>
+                <h3 style="text-align: center;"> I'm a Seller</h3>
                 <p>List your properties and manage incoming offers</p>
                 <ul>
                     <li>List your properties</li>
@@ -161,12 +232,12 @@
                 </ul>
                 <h:form>
                     <p:button value="Continue as Seller" outcome="login?role=SELLER"
-                            icon="pi pi-arrow-right" styleClass="ui-button-help"/>
+                              icon="pi pi-arrow-right" styleClass="ui-button-help"/>
                 </h:form>
             </div>
         </div>
     </div>
-    
+
     <div class="features-section">
         <h3>Why Choose RealEstateHub?</h3>
         <div class="features-grid">
@@ -180,7 +251,7 @@
             </div>
             <div class="feature">
                 <h4>Secure</h4>
-                <p>Safe and secure transactions</p>
+                <p>Safe and secured transactions</p>
             </div>
             <div class="feature">
                 <h4>Fast</h4>
