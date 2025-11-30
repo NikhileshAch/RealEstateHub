@@ -5,6 +5,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
+// Used AI to help write this code - Brevo API integration and HTTP client for email sending
+
 public class EmailNotificationService {
 
     // Brevo (Sendinblue) API - FREE 300 emails/day

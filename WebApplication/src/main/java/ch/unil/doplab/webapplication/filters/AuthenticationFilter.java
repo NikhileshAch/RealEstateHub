@@ -8,6 +8,8 @@ import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 
+// Used AI to help write this code - Servlet filter for role-based access control
+
 @WebFilter(filterName = "AuthenticationFilter", urlPatterns = {"*.xhtml"})
 public class AuthenticationFilter implements Filter {
 

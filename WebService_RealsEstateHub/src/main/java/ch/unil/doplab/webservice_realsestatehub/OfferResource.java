@@ -10,6 +10,8 @@ import jakarta.ws.rs.core.Response;
 
 import java.util.*;
 
+// Used AI to help write this code - JAX-RS REST endpoints and offer status management
+
 @Path("/offers")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)

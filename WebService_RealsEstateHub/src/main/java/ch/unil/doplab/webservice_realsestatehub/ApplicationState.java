@@ -6,6 +6,8 @@ import jakarta.enterprise.context.ApplicationScoped;
 
 import java.util.*;
 
+// Used AI to help write this code - CDI ApplicationScoped singleton for in-memory data storage
+
 /**
  * ApplicationState - Centralized state management bean
  * Replaces static HashMaps with injectable singleton

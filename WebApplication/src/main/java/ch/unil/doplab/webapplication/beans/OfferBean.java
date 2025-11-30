@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+// Used AI to help write this code.
+
 @Named
 @SessionScoped
 public class OfferBean implements Serializable {

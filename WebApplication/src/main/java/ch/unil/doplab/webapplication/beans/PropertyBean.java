@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+// Used AI to help write this code - REST client integration, Stream API filtering, and GenericType usage
+
 @Named
 @SessionScoped
 public class PropertyBean implements Serializable {

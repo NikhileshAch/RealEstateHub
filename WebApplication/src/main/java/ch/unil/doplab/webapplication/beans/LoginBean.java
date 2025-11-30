@@ -15,6 +15,8 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
+// Used AI to help write this code - REST client authentication flow
+
 @Named
 @RequestScoped
 public class LoginBean implements Serializable {

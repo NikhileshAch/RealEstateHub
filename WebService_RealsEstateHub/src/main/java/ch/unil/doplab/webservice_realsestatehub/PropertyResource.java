@@ -8,6 +8,8 @@ import jakarta.ws.rs.core.Response;
 
 import java.util.*;
 
+// Used AI to help write this code - JAX-RS REST endpoints for property CRUD operations
+
 @Path("/properties")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)

@@ -6,6 +6,8 @@ import jakarta.inject.Named;
 import java.io.Serializable;
 import java.util.Map;
 
+// Used AI to help write this code - Session management and FacesContext integration
+
 @Named
 @SessionScoped
 public class SessionBean implements Serializable {
