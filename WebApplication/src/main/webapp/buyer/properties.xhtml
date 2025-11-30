@@ -177,6 +177,14 @@
                         <h:outputText value="#{property.location}"/>
                     </p:column>
                     
+                    <p:column headerText="Description" style="max-width: 200px;">
+                        <h:panelGroup id="descPanel" rendered="#{property.description != null and property.description != ''}">
+                            <h:outputText value="#{property.description.length() > 30 ? property.description.substring(0, 30).concat('...') : property.description}"/>
+                            <p:tooltip for="descPanel" value="#{property.description}" position="top" showDelay="200"/>
+                        </h:panelGroup>
+                        <h:outputText value="-" rendered="#{property.description == null or property.description == ''}" style="color: #999;"/>
+                    </p:column>
+                    
                     <p:column headerText="Price">
                         <h:outputText value="#{propertyBean.formatPrice(property.price)}" style="font-weight: bold; color: #28a745;"/>
                     </p:column>

@@ -180,24 +180,6 @@
                         <p:message for="description"/>
                     </div>
                     
-                    <div class="features-section">
-                        <h3>Features</h3>
-                        <div class="feature-checkboxes">
-                            <label>
-                                <p:selectBooleanCheckbox id="hasGarage" value="#{propertyBean.hasGarage}"/>
-                                Garage
-                            </label>
-                            <label>
-                                <p:selectBooleanCheckbox id="hasPool" value="#{propertyBean.hasPool}"/>
-                                Swimming Pool
-                            </label>
-                            <label>
-                                <p:selectBooleanCheckbox id="hasGarden" value="#{propertyBean.hasGarden}"/>
-                                Garden
-                            </label>
-                        </div>
-                    </div>
-                    
                     <div class="form-actions">
                         <p:commandButton value="List Property" action="#{propertyBean.addProperty()}" 
                                        icon="pi pi-check" styleClass="ui-button-success"/>

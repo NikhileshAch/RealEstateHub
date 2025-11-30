@@ -82,23 +82,31 @@
                            rowHover="true" stripedRows="true"
                            resizableColumns="true" reflow="true">
                     
-                    <p:column headerText="Property" sortBy="#{offer.propertyId}">
+                    <p:column headerText="Property">
                         <h:outputText value="#{offerBean.getPropertyAddress(offer.propertyId)}"/>
                     </p:column>
                     
-                    <p:column headerText="Buyer" sortBy="#{offer.buyerId}">
+                    <p:column headerText="Buyer">
                         <h:outputText value="#{offerBean.getBuyerName(offer.buyerId)}"/>
                     </p:column>
                     
-                    <p:column headerText="Offer Amount" sortBy="#{offer.amount}">
+                    <p:column headerText="Offer Amount">
                         <h:outputText value="#{offerBean.formatAmount(offer.amount)}" style="font-weight: bold; color: #28a745;"/>
                     </p:column>
                     
-                    <p:column headerText="Submitted" sortBy="#{offer.createdAt}">
+                    <p:column headerText="Message" style="max-width: 200px;">
+                        <h:panelGroup id="msgPanel" rendered="#{offer.message != null and offer.message != ''}">
+                            <h:outputText value="#{offer.message.length() > 30 ? offer.message.substring(0, 30).concat('...') : offer.message}"/>
+                            <p:tooltip for="msgPanel" value="#{offer.message}" position="top" showDelay="200"/>
+                        </h:panelGroup>
+                        <h:outputText value="-" rendered="#{offer.message == null or offer.message == ''}" style="color: #999;"/>
+                    </p:column>
+                    
+                    <p:column headerText="Submitted">
                         <h:outputText value="#{offer.createdAt != null ? offer.createdAt : 'N/A'}"/>
                     </p:column>
                     
-                    <p:column headerText="Status" sortBy="#{offer.status}">
+                    <p:column headerText="Status">
                         <p:tag value="#{offer.status}" 
                               severity="#{offer.status == 'ACCEPTED' ? 'success' : (offer.status == 'PENDING' ? 'warning' : 'danger')}"/>
                     </p:column>

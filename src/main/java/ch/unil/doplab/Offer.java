@@ -13,8 +13,13 @@ public class Offer {
     private final double amount;
     private final LocalDateTime createdAt;
     private Status status;
+    private String message; // Message from buyer to seller
 
     public Offer(UUID propertyId, UUID buyerId, double amount) {
+        this(propertyId, buyerId, amount, null);
+    }
+    
+    public Offer(UUID propertyId, UUID buyerId, double amount, String message) {
         if (propertyId == null) throw new IllegalArgumentException("propertyId is required");
         if (buyerId == null) throw new IllegalArgumentException("buyerId is required");
         if (amount <= 0) throw new IllegalArgumentException("amount must be positive");
@@ -24,6 +29,7 @@ public class Offer {
         this.amount = amount;
         this.createdAt = LocalDateTime.now();
         this.status = Status.PENDING;
+        this.message = message;
     }
 
     public UUID getOfferId() { return offerId; }
@@ -33,6 +39,8 @@ public class Offer {
     public LocalDateTime getCreatedAt() { return createdAt; }
     public Status getStatus() { return status; }
     public void setStatus(Status status) { this.status = status; }
+    public String getMessage() { return message; }
+    public void setMessage(String message) { this.message = message; }
 
     @Override
     public boolean equals(Object o) {

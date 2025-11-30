@@ -36,7 +36,8 @@ public class OfferResource {
             Offer offer = new Offer(
                     dto.getPropertyId(),
                     dto.getBuyerId(),
-                    dto.getAmount()
+                    dto.getAmount(),
+                    dto.getMessage()
             );
             
             state.getOffers().put(offer.getOfferId(), offer);
@@ -209,6 +210,7 @@ public class OfferResource {
         private UUID propertyId;
         private UUID buyerId;
         private double amount;
+        private String message;
 
         public UUID getPropertyId() { return propertyId; }
         public void setPropertyId(UUID propertyId) { this.propertyId = propertyId; }
@@ -218,6 +220,9 @@ public class OfferResource {
         
         public double getAmount() { return amount; }
         public void setAmount(double amount) { this.amount = amount; }
+        
+        public String getMessage() { return message; }
+        public void setMessage(String message) { this.message = message; }
     }
 
     public static class StatusDTO {

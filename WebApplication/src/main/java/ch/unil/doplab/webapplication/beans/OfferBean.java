@@ -169,6 +169,7 @@ public class OfferBean implements Serializable {
             offerData.put("buyerId", sessionBean.getUserId());
             offerData.put("propertyId", propertyId);
             offerData.put("amount", offerAmount.doubleValue());
+            offerData.put("message", message); // Include buyer's message to seller
             
             System.out.println("Sending offer data: " + offerData);
             System.out.println("API URL: " + OFFERS_API);
@@ -289,8 +290,8 @@ public class OfferBean implements Serializable {
         String buyerId = buyerIdObj.toString();
         Client client = ClientBuilder.newClient();
         try {
-            // Call the users API to get buyer information
-            Response response = client.target("http://payara:8080/WebService_RealsEstateHub-1.0-SNAPSHOT/api/users")
+            // Call the buyers API to get buyer information
+            Response response = client.target("http://payara:8080/WebService_RealsEstateHub-1.0-SNAPSHOT/api/buyers")
                     .path(buyerId)
                     .request(MediaType.APPLICATION_JSON)
                     .get();
