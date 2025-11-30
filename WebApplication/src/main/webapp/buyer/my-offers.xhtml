@@ -53,20 +53,6 @@
         <p:growl id="messages" showDetail="true" life="3000"/>
         
         <h:form id="mainForm">
-            <!-- Filter Panel -->
-            <p:panel header="Filter Offers" toggleable="true" styleClass="filter-card">
-                <div class="p-field">
-                    <label for="filterStatus">Filter by Status</label>
-                    <p:selectOneMenu id="filterStatus" value="#{offerBean.filterStatus}">
-                        <f:selectItem itemValue="" itemLabel="All Status"/>
-                        <f:selectItem itemValue="PENDING" itemLabel="Pending"/>
-                        <f:selectItem itemValue="ACCEPTED" itemLabel="Accepted"/>
-                        <f:selectItem itemValue="REJECTED" itemLabel="Rejected"/>
-                        <p:ajax event="change" listener="#{offerBean.loadMyOffers()}" update="offersPanel"/>
-                    </p:selectOneMenu>
-                </div>
-            </p:panel>
-            
             <!-- Offers DataTable -->
             <p:panel id="offersPanel" header="My Offers (#{offerBean.filteredOffers.size()})">
                 <p:dataTable id="offersTable" value="#{offerBean.filteredOffers}" var="offer"

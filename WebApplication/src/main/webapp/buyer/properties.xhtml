@@ -73,9 +73,7 @@
                         <div class="p-field">
                             <label for="searchLocation">Location</label>
                             <p:inputText id="searchLocation" value="#{propertyBean.searchLocation}" 
-                                       placeholder="Search by address...">
-                                <p:ajax event="keyup" update="propertiesPanel" delay="300"/>
-                            </p:inputText>
+                                       placeholder="Search by address..."/>
                         </div>
                     </div>
                     
@@ -90,20 +88,6 @@
                                 <f:selectItem itemValue="CONDO" itemLabel="Condo"/>
                                 <f:selectItem itemValue="TOWNHOUSE" itemLabel="Townhouse"/>
                                 <f:selectItem itemValue="LAND" itemLabel="Land"/>
-                                <p:ajax event="change" update="propertiesPanel"/>
-                            </p:selectOneMenu>
-                        </div>
-                    </div>
-                    
-                    <div class="p-col-12 p-md-3">
-                        <div class="p-field">
-                            <label for="filterStatus">Status</label>
-                            <p:selectOneMenu id="filterStatus" value="#{propertyBean.filterStatus}">
-                                <f:selectItem itemValue="" itemLabel="All Status"/>
-                                <f:selectItem itemValue="FOR_SALE" itemLabel="For Sale"/>
-                                <f:selectItem itemValue="PENDING" itemLabel="Pending"/>
-                                <f:selectItem itemValue="SOLD" itemLabel="Sold"/>
-                                <p:ajax event="change" update="propertiesPanel"/>
                             </p:selectOneMenu>
                         </div>
                     </div>
@@ -112,9 +96,7 @@
                         <div class="p-field">
                             <label for="minBedrooms">Min Bedrooms</label>
                             <p:spinner id="minBedrooms" value="#{propertyBean.minBedrooms}" 
-                                      min="0" max="10" stepFactor="1">
-                                <p:ajax event="change" update="propertiesPanel"/>
-                            </p:spinner>
+                                      min="0" max="10" stepFactor="1"/>
                         </div>
                     </div>
                     
@@ -123,9 +105,7 @@
                             <label for="minPrice">Min Price (CHF)</label>
                             <p:inputNumber id="minPrice" value="#{propertyBean.minPrice}" 
                                          symbol=" CHF" symbolPosition="s" decimalSeparator="." 
-                                         thousandSeparator="'" minValue="0">
-                                <p:ajax event="blur" update="propertiesPanel"/>
-                            </p:inputNumber>
+                                         thousandSeparator="'" minValue="0"/>
                         </div>
                     </div>
                     
@@ -134,9 +114,7 @@
                             <label for="maxPrice">Max Price (CHF)</label>
                             <p:inputNumber id="maxPrice" value="#{propertyBean.maxPrice}" 
                                          symbol=" CHF" symbolPosition="s" decimalSeparator="." 
-                                         thousandSeparator="'" minValue="0">
-                                <p:ajax event="blur" update="propertiesPanel"/>
-                            </p:inputNumber>
+                                         thousandSeparator="'" minValue="0"/>
                         </div>
                     </div>
                     
@@ -147,7 +125,6 @@
                                 <f:selectItem itemValue="" itemLabel="Default"/>
                                 <f:selectItem itemValue="price" itemLabel="Price"/>
                                 <f:selectItem itemValue="size" itemLabel="Size"/>
-                                <p:ajax event="change" update="propertiesPanel"/>
                             </p:selectOneMenu>
                         </div>
                     </div>
@@ -155,9 +132,13 @@
                     <div class="p-col-12 p-md-3">
                         <div class="p-field">
                             <label>&#160;</label>
-                            <p:commandButton value="Clear Filters" icon="pi pi-filter-slash"
-                                           action="#{propertyBean.clearFilters()}" 
-                                           update="@form" styleClass="ui-button-warning"/>
+                            <div style="display: flex; gap: 10px;">
+                                <p:commandButton value="Apply Filters" icon="pi pi-search"
+                                               update="propertiesPanel" styleClass="ui-button-primary"/>
+                                <p:commandButton value="Clear" icon="pi pi-filter-slash"
+                                               action="#{propertyBean.clearFilters()}" 
+                                               update="@form" styleClass="ui-button-warning"/>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -201,18 +182,11 @@
                         <h:outputText value="#{property.size} sqm"/>
                     </p:column>
                     
-                    <p:column headerText="Status">
-                        <p:tag value="#{property.status}" 
-                              severity="#{property.status == 'FOR_SALE' ? 'success' : (property.status == 'PENDING' ? 'warning' : 'danger')}"/>
-                    </p:column>
-                    
                     <p:column headerText="Actions" style="text-align: center;">
                         <p:linkButton value="Make Offer" icon="pi pi-dollar"
-                                    outcome="/buyer/create-offer" styleClass="ui-button-success"
-                                    rendered="#{property.status == 'FOR_SALE'}">
+                                    outcome="/buyer/create-offer" styleClass="ui-button-success">
                             <f:param name="propertyId" value="#{property.propertyId}"/>
                         </p:linkButton>
-                        <h:outputText value="-" rendered="#{property.status != 'FOR_SALE'}" style="color: #999;"/>
                     </p:column>
                 </p:dataTable>
             </p:panel>
