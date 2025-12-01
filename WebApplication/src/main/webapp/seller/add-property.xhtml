@@ -196,5 +196,61 @@
             </div>
         </div>
     </div>
+    <script src="https://maps.googleapis.com/maps/api/js?key=VOTRE_CLE_API_ICI&amp;libraries=places&amp;loading=async" async="async" defer="defer"></script>
+
+    <script>
+        function initAutocomplete() {
+            // On cible l'input via la classe qu'on a ajoutée
+            const input = document.querySelector('.address-input');
+
+            if (input) {
+                const options = {
+                    // Restreindre aux adresses géographiques
+                    types: ['geocode'],
+                    // Optionnel : Restreindre à la Suisse (ch) pour des résultats plus pertinents
+                    componentRestrictions: { country: 'ch' },
+                    fields: ['formatted_address', 'geometry', 'name']
+                };
+
+                const autocomplete = new google.maps.places.Autocomplete(input, options);
+
+                // Écouteur : Quand l'utilisateur sélectionne une adresse
+                autocomplete.addListener('place_changed', function() {
+                    const place = autocomplete.getPlace();
+
+                    // Si l'utilisateur a tapé mais pas sélectionné dans la liste
+                    if (!place.geometry) {
+                        return;
+                    }
+
+                    // Mettre à jour la valeur visuelle (optionnel, Google le fait souvent seul)
+                    input.value = place.formatted_address;
+
+                    // IMPORTANT : Déclencher un événement 'change' pour que JSF/PrimeFaces
+                    // sache que la valeur a changé (sinon le Bean risque de recevoir l'ancienne valeur)
+                    input.dispatchEvent(new Event('change'));
+                });
+            }
+        }
+
+        // Lancer le script une fois la fenêtre chargée
+        window.onload = function() {
+            // Petite sécurité pour attendre que l'API Google soit prête
+            if (typeof google !== 'undefined' &amp;&amp; google.maps &amp;&amp; google.maps.places) {
+                initAutocomplete();
+            } else {
+                // Si l'API charge lentement, on réessaye dans 500ms
+                setTimeout(initAutocomplete, 500);
+            }
+        };
+
+        // Empêcher la touche "Entrée" de soumettre le formulaire quand on choisit une adresse
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter' &amp;&amp; document.activeElement.classList.contains('address-input')) {
+                event.preventDefault(); // Bloque l'envoi du formulaire
+                return false;
+            }
+        });
+    </script>
 </h:body>
 </html>
