@@ -51,7 +51,7 @@
     <div class="container">
         <!-- Navigation Bar -->
         <div class="navbar">
-            <div class="navbar-brand">RealEstateHub - Browse Properties</div>
+            <div class="navbar-brand" style="color: #c9a227;">RealEstateHub - Browse Properties</div>
             <div class="navbar-user">
                 <span class="user-info">Welcome, #{sessionBean.userFullName}!</span>
                 <h:form>
@@ -147,9 +147,6 @@
             <!-- Properties DataTable with PrimeFaces -->
             <p:panel id="propertiesPanel" header="Available Properties (#{propertyBean.filteredProperties.size()})">
                 <p:dataTable id="propertiesTable" value="#{propertyBean.filteredProperties}" var="property"
-                           paginator="true" rows="10" rowsPerPageTemplate="5,10,20,50"
-                           paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                           currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords}"
                            emptyMessage="No properties found matching your criteria."
                            rowHover="true" stripedRows="true"
                            resizableColumns="true" reflow="true">

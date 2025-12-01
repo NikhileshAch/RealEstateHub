@@ -56,9 +56,6 @@
             <!-- Offers DataTable -->
             <p:panel id="offersPanel" header="My Offers (#{offerBean.filteredOffers.size()})">
                 <p:dataTable id="offersTable" value="#{offerBean.filteredOffers}" var="offer"
-                           paginator="true" rows="10" rowsPerPageTemplate="5,10,20"
-                           paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                           currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords}"
                            emptyMessage="You haven't made any offers yet."
                            rowHover="true" stripedRows="true"
                            resizableColumns="true" reflow="true">
@@ -72,7 +69,7 @@
                     </p:column>
                     
                     <p:column headerText="Created">
-                        <h:outputText value="#{offer.createdAt != null ? offer.createdAt : 'N/A'}"/>
+                        <h:outputText value="#{offerBean.formatDate(offer.createdAt)}"/>
                     </p:column>
                     
                     <p:column headerText="Status">

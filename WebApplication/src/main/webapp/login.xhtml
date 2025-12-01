@@ -65,22 +65,22 @@
             padding-top: 20px;
             border-top: 1px solid #eee;
         }
-        .demo-box {
-            background: #f8f9fa;
-            border-radius: 10px;
-            padding: 15px;
-            margin-top: 20px;
-        }
-        .demo-box h4 {
-            margin: 0 0 10px;
-            color: #1a2a4a;
-        }
-        .demo-box p {
-            margin: 5px 0;
-            font-size: 0.9rem;
-        }
         .ui-selectonemenu-trigger {
             width: 2em !important;
+        }
+        .error-box {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .error-box i {
+            font-size: 1.2rem;
         }
     </style>
 </h:head>
@@ -96,10 +96,17 @@
         </div>
         
         <div class="login-body">
-            <p:growl id="messages" showDetail="true" life="5000"/>
-            <h:messages globalOnly="true" styleClass="messages"/>
+            <p:growl id="growl" showDetail="true" life="5000"/>
             
-            <h:form>
+            <h:form id="loginForm">
+                <!-- Error Message Display -->
+                <h:panelGroup id="errorPanel" rendered="#{not empty loginBean.errorMessage}">
+                    <div class="error-box">
+                        <i class="pi pi-exclamation-circle"></i>
+                        <span>#{loginBean.errorMessage}</span>
+                    </div>
+                </h:panelGroup>
+                
                 <div class="p-field">
                     <label for="role">Login as</label>
                     <p:selectOneMenu id="role" value="#{loginBean.selectedRole}" required="true"
@@ -131,7 +138,8 @@
                 
                 <div class="login-actions">
                     <p:commandButton value="Login" action="#{loginBean.login}" 
-                                   icon="pi pi-sign-in" styleClass="ui-button-success"/>
+                                   icon="pi pi-sign-in" styleClass="ui-button-success"
+                                   update="messages @form" ajax="false"/>
                     <p:button value="Back" outcome="index" icon="pi pi-arrow-left" 
                             styleClass="ui-button-secondary"/>
                 </div>
@@ -139,13 +147,6 @@
             
             <div class="register-link">
                 <p>Don't have an account? <h:link outcome="register" value="Register here" style="color: #c9a227; font-weight: bold;"/></p>
-            </div>
-            
-            <div class="demo-box">
-                <h4>Demo Credentials</h4>
-                <p><strong>Buyer:</strong> alice@demo.com / pass123</p>
-                <p><strong>Buyer:</strong> jonathan.grossrieder@unil.ch / pass456</p>
-                <p><strong>Seller:</strong> seller@demo.com / pass789</p>
             </div>
         </div>
     </div>

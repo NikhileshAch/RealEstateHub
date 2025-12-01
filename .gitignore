@@ -40,3 +40,6 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+### MySQL JDBC Driver ###
+mysql-connector-j-*.jar

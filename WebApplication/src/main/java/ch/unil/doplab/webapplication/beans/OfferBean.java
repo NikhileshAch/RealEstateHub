@@ -15,6 +15,8 @@ import jakarta.ws.rs.core.Response;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -280,6 +282,42 @@ public class OfferBean implements Serializable {
             client.close();
         }
         return "Unknown";
+    }
+    
+    public String getPropertyDescription(String propId) {
+        Client client = ClientBuilder.newClient();
+        try {
+            Response response = client.target(PROPERTIES_API)
+                    .path(propId)
+                    .request(MediaType.APPLICATION_JSON)
+                    .get();
+            
+            if (response.getStatus() == 200) {
+                Map<String, Object> property = response.readEntity(new GenericType<Map<String, Object>>() {});
+                Object description = property.get("description");
+                return description != null && !description.toString().isEmpty() ? description.toString() : "No description available";
+            }
+        } catch (Exception e) {
+            // Ignore
+        } finally {
+            client.close();
+        }
+        return "No description available";
+    }
+    
+    public String formatDate(Object dateObj) {
+        if (dateObj == null) return "N/A";
+        try {
+            String dateStr = dateObj.toString();
+            // Parse ISO datetime format and convert to dd/MM/yyyy
+            if (dateStr.contains("T")) {
+                LocalDateTime dateTime = LocalDateTime.parse(dateStr.substring(0, 19));
+                return dateTime.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+            }
+            return dateStr;
+        } catch (Exception e) {
+            return "N/A";
+        }
     }
     
     public String getBuyerName(Object buyerIdObj) {

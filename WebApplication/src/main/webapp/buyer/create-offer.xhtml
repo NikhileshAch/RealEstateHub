@@ -97,7 +97,8 @@
                 
                 <h:form>
                     <div class="property-info">
-                        <p><strong>Property ID:</strong> #{offerBean.propertyId}</p>
+                        <p><strong>Property:</strong> #{offerBean.getPropertyAddress(offerBean.propertyId)}</p>
+                        <p><strong>Description:</strong> #{offerBean.getPropertyDescription(offerBean.propertyId)}</p>
                     </div>
                     
                     <div class="p-field">

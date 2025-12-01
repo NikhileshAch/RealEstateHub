@@ -1,18 +1,18 @@
 package ch.unil.doplab.webservice_realsestatehub;
 
-import ch.unil.doplab.Property;
-import ch.unil.doplab.Seller;
+import ch.unil.doplab.webservice_realsestatehub.entity.PropertyEntity;
+import ch.unil.doplab.webservice_realsestatehub.entity.SellerEntity;
+import ch.unil.doplab.webservice_realsestatehub.repository.PropertyRepository;
+import ch.unil.doplab.webservice_realsestatehub.repository.SellerRepository;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
- * SellerResource - REST API for Seller CRUD operations
- * Third extra feature for grade improvement
+ * SellerResource - REST API for Seller CRUD operations with JPA
  */
 @Path("/sellers")
 @Produces(MediaType.APPLICATION_JSON)
@@ -20,7 +20,10 @@ import java.util.stream.Collectors;
 public class SellerResource {
 
     @Inject
-    private ApplicationState state;
+    private SellerRepository sellerRepository;
+    
+    @Inject
+    private PropertyRepository propertyRepository;
 
     // ===== CREATE =====
     @POST
@@ -31,7 +34,7 @@ public class SellerResource {
                     .build();
         }
 
-        Seller seller = new Seller(
+        SellerEntity seller = new SellerEntity(
                 sellerDTO.firstName,
                 sellerDTO.lastName,
                 sellerDTO.email,
@@ -39,18 +42,19 @@ public class SellerResource {
                 sellerDTO.password
         );
 
-        state.getSellers().put(seller.getUserID(), seller);
+        SellerEntity saved = sellerRepository.save(seller);
 
         return Response.status(Response.Status.CREATED)
-                .entity(seller)
+                .entity(toDTO(saved))
                 .build();
     }
 
     // ===== READ ALL =====
     @GET
     public Response getAllSellers() {
-        List<Seller> sellerList = new ArrayList<>(state.getSellers().values());
-        return Response.ok(sellerList).build();
+        List<SellerEntity> sellers = sellerRepository.findAll();
+        List<Map<String, Object>> result = sellers.stream().map(this::toDTO).toList();
+        return Response.ok(result).build();
     }
 
     // ===== READ ONE =====
@@ -58,17 +62,16 @@ public class SellerResource {
     @Path("/{id}")
     public Response getSellerById(@PathParam("id") String id) {
         try {
-            UUID sellerId = UUID.fromString(id);
-            Seller seller = state.getSellerById(sellerId);
+            Optional<SellerEntity> seller = sellerRepository.findById(id);
 
-            if (seller == null) {
+            if (seller.isEmpty()) {
                 return Response.status(Response.Status.NOT_FOUND)
                         .entity(new ErrorResponse("Seller not found"))
                         .build();
             }
 
-            return Response.ok(seller).build();
-        } catch (IllegalArgumentException e) {
+            return Response.ok(toDTO(seller.get())).build();
+        } catch (Exception e) {
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity(new ErrorResponse("Invalid seller ID format"))
                     .build();
@@ -80,24 +83,24 @@ public class SellerResource {
     @Path("/{id}")
     public Response updateSeller(@PathParam("id") String id, SellerDTO sellerDTO) {
         try {
-            UUID sellerId = UUID.fromString(id);
-            Seller seller = state.getSellerById(sellerId);
+            Optional<SellerEntity> optSeller = sellerRepository.findById(id);
 
-            if (seller == null) {
+            if (optSeller.isEmpty()) {
                 return Response.status(Response.Status.NOT_FOUND)
                         .entity(new ErrorResponse("Seller not found"))
                         .build();
             }
 
-            // Update fields
+            SellerEntity seller = optSeller.get();
             if (sellerDTO.firstName != null) seller.setFirstName(sellerDTO.firstName);
             if (sellerDTO.lastName != null) seller.setLastName(sellerDTO.lastName);
             if (sellerDTO.email != null) seller.setEmail(sellerDTO.email);
             if (sellerDTO.username != null) seller.setUsername(sellerDTO.username);
             if (sellerDTO.password != null) seller.setPassword(sellerDTO.password);
 
-            return Response.ok(seller).build();
-        } catch (IllegalArgumentException e) {
+            SellerEntity updated = sellerRepository.update(seller);
+            return Response.ok(toDTO(updated)).build();
+        } catch (Exception e) {
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity(new ErrorResponse("Invalid seller ID format"))
                     .build();
@@ -109,17 +112,17 @@ public class SellerResource {
     @Path("/{id}")
     public Response deleteSeller(@PathParam("id") String id) {
         try {
-            UUID sellerId = UUID.fromString(id);
-            Seller removed = state.getSellers().remove(sellerId);
+            Optional<SellerEntity> seller = sellerRepository.findById(id);
 
-            if (removed == null) {
+            if (seller.isEmpty()) {
                 return Response.status(Response.Status.NOT_FOUND)
                         .entity(new ErrorResponse("Seller not found"))
                         .build();
             }
 
+            sellerRepository.delete(id);
             return Response.status(Response.Status.NO_CONTENT).build();
-        } catch (IllegalArgumentException e) {
+        } catch (Exception e) {
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity(new ErrorResponse("Invalid seller ID format"))
                     .build();
@@ -131,25 +134,59 @@ public class SellerResource {
     @Path("/{id}/properties")
     public Response getSellerProperties(@PathParam("id") String id) {
         try {
-            UUID sellerId = UUID.fromString(id);
-            Seller seller = state.getSellerById(sellerId);
+            Optional<SellerEntity> seller = sellerRepository.findById(id);
 
-            if (seller == null) {
+            if (seller.isEmpty()) {
                 return Response.status(Response.Status.NOT_FOUND)
                         .entity(new ErrorResponse("Seller not found"))
                         .build();
             }
 
-            List<Property> ownedProperties = state.getProperties().values().stream()
-                    .filter(p -> p.getOwnerId() != null && p.getOwnerId().equals(sellerId))
-                    .collect(Collectors.toList());
+            List<PropertyEntity> ownedProperties = propertyRepository.findByOwnerId(id);
+            List<Map<String, Object>> result = ownedProperties.stream()
+                    .map(this::propertyToDTO)
+                    .toList();
 
-            return Response.ok(ownedProperties).build();
-        } catch (IllegalArgumentException e) {
+            return Response.ok(result).build();
+        } catch (Exception e) {
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity(new ErrorResponse("Invalid seller ID format"))
                     .build();
         }
+    }
+
+    // Convert seller entity to DTO map
+    private Map<String, Object> toDTO(SellerEntity s) {
+        Map<String, Object> dto = new HashMap<>();
+        dto.put("userID", s.getUserId());
+        dto.put("firstName", s.getFirstName());
+        dto.put("lastName", s.getLastName());
+        dto.put("email", s.getEmail());
+        dto.put("username", s.getUsername());
+        dto.put("password", s.getPassword());
+        dto.put("role", "Seller");
+        return dto;
+    }
+    
+    // Convert property entity to DTO map
+    private Map<String, Object> propertyToDTO(PropertyEntity p) {
+        Map<String, Object> dto = new HashMap<>();
+        dto.put("propertyId", p.getPropertyId());
+        dto.put("ownerId", p.getOwnerId());
+        dto.put("title", p.getTitle());
+        dto.put("description", p.getDescription());
+        dto.put("location", p.getLocation());
+        dto.put("price", p.getPrice());
+        dto.put("size", p.getSize());
+        dto.put("type", p.getType() != null ? p.getType().name() : null);
+        dto.put("status", p.getStatus() != null ? p.getStatus().name() : null);
+        
+        Map<String, Object> features = new HashMap<>();
+        features.put("bedrooms", p.getBedrooms());
+        features.put("bathrooms", p.getBathrooms());
+        dto.put("features", features);
+        
+        return dto;
     }
 
     // ===== DTOs =====

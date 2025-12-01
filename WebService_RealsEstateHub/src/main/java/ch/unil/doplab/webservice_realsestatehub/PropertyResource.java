@@ -1,6 +1,7 @@
 package ch.unil.doplab.webservice_realsestatehub;
 
-import ch.unil.doplab.Property;
+import ch.unil.doplab.webservice_realsestatehub.entity.PropertyEntity;
+import ch.unil.doplab.webservice_realsestatehub.repository.PropertyRepository;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -8,7 +9,7 @@ import jakarta.ws.rs.core.Response;
 
 import java.util.*;
 
-// Used AI to help write this code - JAX-RS REST endpoints for property CRUD operations
+// Used AI to help write this code - JAX-RS REST endpoints for property CRUD operations with JPA
 
 @Path("/properties")
 @Produces(MediaType.APPLICATION_JSON)
@@ -16,8 +17,7 @@ import java.util.*;
 public class PropertyResource {
 
     @Inject
-    private ApplicationState state;
-
+    private PropertyRepository propertyRepository;
 
     /**
      * Create a new property
@@ -26,30 +26,45 @@ public class PropertyResource {
     @POST
     public Response createProperty(PropertyDTO dto) {
         try {
-            Property property = new Property(
-                    dto.getTitle(),
-                    dto.getOwnerId(),
-                    dto.getDescription(),
-                    dto.getLocation(),
-                    dto.getPrice(),
-                    dto.getSize(),
-                    Property.PropertyType.valueOf(dto.getType())
-            );
+            PropertyEntity property = new PropertyEntity();
+            property.setOwnerId(dto.getOwnerId() != null ? dto.getOwnerId().toString() : null);
+            property.setTitle(dto.getTitle());
+            property.setDescription(dto.getDescription());
+            property.setLocation(dto.getLocation());
+            property.setPrice(dto.getPrice());
+            property.setSize(dto.getSize());
             
-            // Set status if provided
+            if (dto.getType() != null && !dto.getType().isEmpty()) {
+                property.setType(PropertyEntity.PropertyType.valueOf(dto.getType()));
+            }
+            
             if (dto.getStatus() != null && !dto.getStatus().isEmpty()) {
-                property.setStatus(Property.PropertyStatus.valueOf(dto.getStatus()));
+                property.setStatus(PropertyEntity.PropertyStatus.valueOf(dto.getStatus()));
             }
             
             // Set features if provided
-            if (dto.getFeatures() != null && !dto.getFeatures().isEmpty()) {
-                dto.getFeatures().forEach(property::addFeature);
+            if (dto.getFeatures() != null) {
+                if (dto.getFeatures().get("bedrooms") != null) {
+                    property.setBedrooms(((Number) dto.getFeatures().get("bedrooms")).intValue());
+                }
+                if (dto.getFeatures().get("bathrooms") != null) {
+                    property.setBathrooms(((Number) dto.getFeatures().get("bathrooms")).intValue());
+                }
+                if (dto.getFeatures().get("hasGarage") != null) {
+                    property.setHasGarage((Boolean) dto.getFeatures().get("hasGarage"));
+                }
+                if (dto.getFeatures().get("hasPool") != null) {
+                    property.setHasPool((Boolean) dto.getFeatures().get("hasPool"));
+                }
+                if (dto.getFeatures().get("hasGarden") != null) {
+                    property.setHasGarden((Boolean) dto.getFeatures().get("hasGarden"));
+                }
             }
             
-            state.getProperties().put(property.getPropertyId(), property);
+            PropertyEntity saved = propertyRepository.save(property);
             
             return Response.status(Response.Status.CREATED)
-                    .entity(property)
+                    .entity(toDTO(saved))
                     .build();
         } catch (Exception e) {
             return Response.status(Response.Status.BAD_REQUEST)
@@ -64,7 +79,9 @@ public class PropertyResource {
      */
     @GET
     public Response getAllProperties() {
-        return Response.ok(new ArrayList<>(state.getProperties().values())).build();
+        List<PropertyEntity> properties = propertyRepository.findAll();
+        List<Map<String, Object>> result = properties.stream().map(this::toDTO).toList();
+        return Response.ok(result).build();
     }
 
     /**
@@ -75,19 +92,18 @@ public class PropertyResource {
     @Path("/{id}")
     public Response getPropertyById(@PathParam("id") String id) {
         try {
-            UUID propertyId = UUID.fromString(id);
-            Property property = state.getPropertyById(propertyId);
+            Optional<PropertyEntity> property = propertyRepository.findById(id);
             
-            if (property == null) {
+            if (property.isEmpty()) {
                 return Response.status(Response.Status.NOT_FOUND)
                         .entity(new ErrorResponse("Property not found"))
                         .build();
             }
             
-            return Response.ok(property).build();
-        } catch (IllegalArgumentException e) {
+            return Response.ok(toDTO(property.get())).build();
+        } catch (Exception e) {
             return Response.status(Response.Status.BAD_REQUEST)
-                    .entity(new ErrorResponse("Invalid property ID"))
+                    .entity(new ErrorResponse("Invalid property ID: " + e.getMessage()))
                     .build();
         }
     }
@@ -100,26 +116,39 @@ public class PropertyResource {
     @Path("/{id}")
     public Response updateProperty(@PathParam("id") String id, PropertyDTO dto) {
         try {
-            UUID propertyId = UUID.fromString(id);
-            Property property = state.getPropertyById(propertyId);
+            Optional<PropertyEntity> optProperty = propertyRepository.findById(id);
             
-            if (property == null) {
+            if (optProperty.isEmpty()) {
                 return Response.status(Response.Status.NOT_FOUND)
                         .entity(new ErrorResponse("Property not found"))
                         .build();
             }
             
-            // Update property fields
-            property.updatePropertyDetails(
-                    dto.getTitle(),
-                    dto.getDescription(),
-                    dto.getLocation(),
-                    dto.getPrice(),
-                    dto.getSize(),
-                    dto.getType() != null ? Property.PropertyType.valueOf(dto.getType()) : null
-            );
+            PropertyEntity property = optProperty.get();
             
-            return Response.ok(property).build();
+            if (dto.getTitle() != null) property.setTitle(dto.getTitle());
+            if (dto.getDescription() != null) property.setDescription(dto.getDescription());
+            if (dto.getLocation() != null) property.setLocation(dto.getLocation());
+            if (dto.getPrice() > 0) property.setPrice(dto.getPrice());
+            if (dto.getSize() > 0) property.setSize(dto.getSize());
+            if (dto.getType() != null && !dto.getType().isEmpty()) {
+                property.setType(PropertyEntity.PropertyType.valueOf(dto.getType()));
+            }
+            if (dto.getStatus() != null && !dto.getStatus().isEmpty()) {
+                property.setStatus(PropertyEntity.PropertyStatus.valueOf(dto.getStatus()));
+            }
+            
+            if (dto.getFeatures() != null) {
+                if (dto.getFeatures().get("bedrooms") != null) {
+                    property.setBedrooms(((Number) dto.getFeatures().get("bedrooms")).intValue());
+                }
+                if (dto.getFeatures().get("bathrooms") != null) {
+                    property.setBathrooms(((Number) dto.getFeatures().get("bathrooms")).intValue());
+                }
+            }
+            
+            PropertyEntity updated = propertyRepository.update(property);
+            return Response.ok(toDTO(updated)).build();
         } catch (Exception e) {
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity(new ErrorResponse("Invalid data: " + e.getMessage()))
@@ -135,21 +164,22 @@ public class PropertyResource {
     @Path("/{id}")
     public Response deleteProperty(@PathParam("id") String id) {
         try {
-            UUID propertyId = UUID.fromString(id);
-            Property removed = state.getProperties().remove(propertyId);
+            Optional<PropertyEntity> property = propertyRepository.findById(id);
             
-            if (removed == null) {
+            if (property.isEmpty()) {
                 return Response.status(Response.Status.NOT_FOUND)
                         .entity(new ErrorResponse("Property not found"))
                         .build();
             }
             
+            propertyRepository.delete(id);
+            
             return Response.ok()
                     .entity(new SuccessResponse("Property deleted successfully"))
                     .build();
-        } catch (IllegalArgumentException e) {
+        } catch (Exception e) {
             return Response.status(Response.Status.BAD_REQUEST)
-                    .entity(new ErrorResponse("Invalid property ID"))
+                    .entity(new ErrorResponse("Invalid property ID: " + e.getMessage()))
                     .build();
         }
     }
@@ -161,12 +191,40 @@ public class PropertyResource {
     @GET
     @Path("/search")
     public Response searchProperties(@QueryParam("location") String location) {
-        List<Property> results = state.getProperties().values().stream()
+        List<PropertyEntity> properties = propertyRepository.findAll();
+        List<Map<String, Object>> results = properties.stream()
                 .filter(p -> location == null || 
-                        (p.getLocation() != null && p.getLocation().equalsIgnoreCase(location)))
+                        (p.getLocation() != null && p.getLocation().toLowerCase().contains(location.toLowerCase())))
+                .map(this::toDTO)
                 .toList();
         
         return Response.ok(results).build();
+    }
+    
+    // Convert entity to DTO map for JSON response
+    private Map<String, Object> toDTO(PropertyEntity p) {
+        Map<String, Object> dto = new HashMap<>();
+        dto.put("propertyId", p.getPropertyId());
+        dto.put("ownerId", p.getOwnerId());
+        dto.put("title", p.getTitle());
+        dto.put("description", p.getDescription());
+        dto.put("location", p.getLocation());
+        dto.put("price", p.getPrice());
+        dto.put("size", p.getSize());
+        dto.put("type", p.getType() != null ? p.getType().name() : null);
+        dto.put("status", p.getStatus() != null ? p.getStatus().name() : null);
+        dto.put("createdAt", p.getCreatedAt());
+        dto.put("updatedAt", p.getUpdatedAt());
+        
+        Map<String, Object> features = new HashMap<>();
+        features.put("bedrooms", p.getBedrooms());
+        features.put("bathrooms", p.getBathrooms());
+        features.put("hasGarage", p.getHasGarage());
+        features.put("hasPool", p.getHasPool());
+        features.put("hasGarden", p.getHasGarden());
+        dto.put("features", features);
+        
+        return dto;
     }
 
     // DTO for creating/updating properties
@@ -177,11 +235,10 @@ public class PropertyResource {
         private String location;
         private double price;
         private double size;
-        private String type; // APARTMENT, HOUSE, etc.
-        private String status; // FOR_SALE, PENDING, SOLD, OFF_MARKET
-        private Map<String, Object> features; // bedrooms, bathrooms, etc.
+        private String type;
+        private String status;
+        private Map<String, Object> features;
 
-        // Getters and setters
         public String getTitle() { return title; }
         public void setTitle(String title) { this.title = title; }
         
@@ -210,7 +267,6 @@ public class PropertyResource {
         public void setFeatures(Map<String, Object> features) { this.features = features; }
     }
 
-    // Helper classes for responses
     public static class ErrorResponse {
         private String error;
         public ErrorResponse(String error) { this.error = error; }

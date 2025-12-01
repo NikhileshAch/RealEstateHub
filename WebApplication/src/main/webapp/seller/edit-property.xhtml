@@ -179,30 +179,14 @@
                         <p:message for="description"/>
                     </div>
                     
-                    <div class="features-section">
-                        <h3>Features</h3>
-                        <div class="feature-checkboxes">
-                            <label>
-                                <p:selectBooleanCheckbox id="hasGarage" value="#{propertyBean.hasGarage}"/>
-                                Garage
-                            </label>
-                            <label>
-                                <p:selectBooleanCheckbox id="hasPool" value="#{propertyBean.hasPool}"/>
-                                Swimming Pool
-                            </label>
-                            <label>
-                                <p:selectBooleanCheckbox id="hasGarden" value="#{propertyBean.hasGarden}"/>
-                                Garden
-                            </label>
-                        </div>
-                    </div>
-                    
                     <div class="form-actions">
                         <p:commandButton value="Update Property" 
-                                       action="#{propertyBean.updateProperty(propertyBean.selectedProperty.id)}" 
-                                       icon="pi pi-save" styleClass="ui-button-success"/>
+                                       action="#{propertyBean.updateProperty()}" 
+                                       icon="pi pi-save" styleClass="ui-button-success"
+                                       ajax="false"/>
                         <p:commandButton value="Cancel" action="/seller/my-properties?faces-redirect=true" 
-                                       immediate="true" icon="pi pi-times" styleClass="ui-button-secondary"/>
+                                       immediate="true" icon="pi pi-times" styleClass="ui-button-secondary"
+                                       ajax="false"/>
                     </div>
                 </h:form>
             </div>

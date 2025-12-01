@@ -1,6 +1,7 @@
 package ch.unil.doplab.webservice_realsestatehub;
 
-import ch.unil.doplab.Buyer;
+import ch.unil.doplab.webservice_realsestatehub.entity.BuyerEntity;
+import ch.unil.doplab.webservice_realsestatehub.repository.BuyerRepository;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -14,38 +15,34 @@ import java.util.*;
 public class BuyerResource {
 
     @Inject
-    private ApplicationState state;
+    private BuyerRepository buyerRepository;
 
     /**
-     * Créer un nouvel acheteur
+     * Create a new buyer
      * POST /api/buyers
      */
     @POST
     public Response createBuyer(BuyerDTO dto) {
         try {
-            // Validation simple
             if (dto.getEmail() == null || dto.getEmail().isEmpty()) {
                 return Response.status(Response.Status.BAD_REQUEST)
                         .entity(new ErrorResponse("Email is required"))
                         .build();
             }
-            
-            // Budget is optional - default to 0 if not provided
-            double budget = dto.getBudget() > 0 ? dto.getBudget() : 0;
 
-            Buyer buyer = new Buyer(
+            BuyerEntity buyer = new BuyerEntity(
                     dto.getFirstName(),
                     dto.getLastName(),
                     dto.getEmail(),
                     dto.getUsername(),
                     dto.getPassword(),
-                    budget
+                    dto.getBudget() > 0 ? dto.getBudget() : 0.0
             );
 
-            state.getBuyers().put(buyer.getUserID(), buyer);
+            BuyerEntity saved = buyerRepository.save(buyer);
 
             return Response.status(Response.Status.CREATED)
-                    .entity(buyer)
+                    .entity(toDTO(saved))
                     .build();
         } catch (Exception e) {
             return Response.status(Response.Status.BAD_REQUEST)
@@ -55,33 +52,34 @@ public class BuyerResource {
     }
 
     /**
-     * Obtenir tous les acheteurs
+     * Get all buyers
      * GET /api/buyers
      */
     @GET
     public Response getAllBuyers() {
-        return Response.ok(new ArrayList<>(state.getBuyers().values())).build();
+        List<BuyerEntity> buyers = buyerRepository.findAll();
+        List<Map<String, Object>> result = buyers.stream().map(this::toDTO).toList();
+        return Response.ok(result).build();
     }
 
     /**
-     * Obtenir un acheteur par son ID
+     * Get buyer by ID
      * GET /api/buyers/{id}
      */
     @GET
     @Path("/{id}")
     public Response getBuyerById(@PathParam("id") String id) {
         try {
-            UUID buyerId = UUID.fromString(id);
-            Buyer buyer = state.getBuyerById(buyerId);
+            Optional<BuyerEntity> buyer = buyerRepository.findById(id);
 
-            if (buyer == null) {
+            if (buyer.isEmpty()) {
                 return Response.status(Response.Status.NOT_FOUND)
                         .entity(new ErrorResponse("Buyer not found"))
                         .build();
             }
 
-            return Response.ok(buyer).build();
-        } catch (IllegalArgumentException e) {
+            return Response.ok(toDTO(buyer.get())).build();
+        } catch (Exception e) {
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity(new ErrorResponse("Invalid buyer ID"))
                     .build();
@@ -89,17 +87,16 @@ public class BuyerResource {
     }
 
     /**
-     * Mettre à jour le budget d'un acheteur (similaire à /status pour Offer)
+     * Update buyer budget
      * PUT /api/buyers/{id}/budget
      */
     @PUT
     @Path("/{id}/budget")
     public Response updateBuyerBudget(@PathParam("id") String id, BudgetDTO dto) {
         try {
-            UUID buyerId = UUID.fromString(id);
-            Buyer buyer = state.getBuyerById(buyerId);
+            Optional<BuyerEntity> optBuyer = buyerRepository.findById(id);
 
-            if (buyer == null) {
+            if (optBuyer.isEmpty()) {
                 return Response.status(Response.Status.NOT_FOUND)
                         .entity(new ErrorResponse("Buyer not found"))
                         .build();
@@ -111,10 +108,12 @@ public class BuyerResource {
                         .build();
             }
 
+            BuyerEntity buyer = optBuyer.get();
             buyer.setBudget(dto.getBudget());
+            BuyerEntity updated = buyerRepository.update(buyer);
 
-            return Response.ok(buyer).build();
-        } catch (IllegalArgumentException e) {
+            return Response.ok(toDTO(updated)).build();
+        } catch (Exception e) {
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity(new ErrorResponse("Invalid buyer ID"))
                     .build();
@@ -122,37 +121,48 @@ public class BuyerResource {
     }
 
     /**
-     * Supprimer un acheteur
+     * Delete buyer
      * DELETE /api/buyers/{id}
      */
     @DELETE
     @Path("/{id}")
     public Response deleteBuyer(@PathParam("id") String id) {
         try {
-            UUID buyerId = UUID.fromString(id);
-            Buyer removed = state.getBuyers().remove(buyerId);
+            Optional<BuyerEntity> buyer = buyerRepository.findById(id);
 
-            if (removed == null) {
+            if (buyer.isEmpty()) {
                 return Response.status(Response.Status.NOT_FOUND)
                         .entity(new ErrorResponse("Buyer not found"))
                         .build();
             }
 
+            buyerRepository.delete(id);
+
             return Response.ok()
                     .entity(new SuccessResponse("Buyer deleted successfully"))
                     .build();
-        } catch (IllegalArgumentException e) {
+        } catch (Exception e) {
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity(new ErrorResponse("Invalid buyer ID"))
                     .build();
         }
     }
 
-    // --- DTOs et Classes de Réponse ---
+    // Convert entity to DTO map
+    private Map<String, Object> toDTO(BuyerEntity b) {
+        Map<String, Object> dto = new HashMap<>();
+        dto.put("userID", b.getUserId());
+        dto.put("firstName", b.getFirstName());
+        dto.put("lastName", b.getLastName());
+        dto.put("email", b.getEmail());
+        dto.put("username", b.getUsername());
+        dto.put("password", b.getPassword());
+        dto.put("budget", b.getBudget());
+        dto.put("role", "Buyer");
+        return dto;
+    }
 
-    /**
-     * DTO pour la création d'un Buyer
-     */
+    // DTOs
     public static class BuyerDTO {
         private String firstName;
         private String lastName;
@@ -161,7 +171,6 @@ public class BuyerResource {
         private String password;
         private double budget;
 
-        // Getters et Setters
         public String getFirstName() { return firstName; }
         public void setFirstName(String firstName) { this.firstName = firstName; }
         public String getLastName() { return lastName; }
@@ -176,18 +185,12 @@ public class BuyerResource {
         public void setBudget(double budget) { this.budget = budget; }
     }
 
-    /**
-     * DTO pour mettre à jour le budget (similaire au StatusDTO)
-     */
     public static class BudgetDTO {
         private double budget;
-
         public double getBudget() { return budget; }
         public void setBudget(double budget) { this.budget = budget; }
     }
 
-
-    // (Vous pouvez réutiliser les mêmes classes ErrorResponse et SuccessResponse)
     public static class ErrorResponse {
         private String error;
         public ErrorResponse(String error) { this.error = error; }

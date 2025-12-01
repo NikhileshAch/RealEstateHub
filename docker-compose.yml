@@ -1,8 +1,30 @@
 services:
+  # MySQL Database
+  mysql:
+    container_name: mysql-RealEstateHub
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   #Payara server
   payara:
     container_name: payara-RealEstateHub
     image: payara/server-full:6.2025.8-jdk17
+    depends_on:
+      mysql:
+        condition: service_healthy
     environment:
       SECURE_ADMIN: "true"
       ADMIN_USER: "admin"
@@ -15,4 +37,9 @@ services:
       #auto deploy (maps local target artefact to container)
       - ./WebService_RealsEstateHub/target/WebService_RealsEstateHub-1.0-SNAPSHOT.war:/opt/payara/appserver/glassfish/domains/domain1/autodeploy/WebService_RealsEstateHub-1.0-SNAPSHOT.war
       - ./WebApplication/target/WebApplication-1.0-SNAPSHOT.war:/opt/payara/appserver/glassfish/domains/domain1/autodeploy/WebApplication-1.0-SNAPSHOT.war
+      # MySQL JDBC Driver
+      - ./mysql-connector-j-8.2.0.jar:/opt/payara/appserver/glassfish/domains/domain1/lib/mysql-connector-j-8.2.0.jar
+
+volumes:
+  mysql_data:
 

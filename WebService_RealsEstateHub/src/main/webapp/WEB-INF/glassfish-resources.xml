@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE resources PUBLIC "-//GlassFish.org//DTD GlassFish Application Server 3.1 Resource Definitions//EN" 
+    "http://glassfish.org/dtds/glassfish-resources_1_5.dtd">
+<resources>
+    <!-- JDBC Connection Pool -->
+    <jdbc-connection-pool name="RealEstateHubPool"
+                          datasource-classname="com.mysql.cj.jdbc.MysqlDataSource"
+                          res-type="javax.sql.DataSource">
+        <property name="serverName" value="mysql"/>
+        <property name="portNumber" value="3306"/>
+        <property name="databaseName" value="realestatehub"/>
+        <property name="user" value="realestate"/>
+        <property name="password" value="realestate123"/>
+        <property name="useSSL" value="false"/>
+        <property name="allowPublicKeyRetrieval" value="true"/>
+        <property name="characterEncoding" value="UTF-8"/>
+        <property name="useUnicode" value="true"/>
+    </jdbc-connection-pool>
+    
+    <!-- JDBC Resource -->
+    <jdbc-resource pool-name="RealEstateHubPool" jndi-name="jdbc/RealEstateHubDS"/>
+</resources>

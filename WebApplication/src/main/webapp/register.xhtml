@@ -145,7 +145,8 @@
                     <div class="p-field">
                         <label for="password">Password *</label>
                         <p:password id="password" value="#{registerBean.password}" required="true"
-                                  requiredMessage="Password is required" feedback="true" toggleMask="true">
+                                  requiredMessage="Password is required" feedback="true" toggleMask="true"
+                                  validatorMessage="Password must be at least 6 characters">
                             <f:validateLength minimum="6"/>
                         </p:password>
                         <p:message for="password"/>
@@ -162,7 +163,8 @@
                 
                 <div class="register-actions">
                     <p:commandButton value="Register" action="#{registerBean.register}" 
-                                   icon="pi pi-user-plus" styleClass="ui-button-success"/>
+                                   icon="pi pi-user-plus" styleClass="ui-button-success"
+                                   update="@form messages"/>
                     <p:button value="Cancel" outcome="index" icon="pi pi-times" 
                             styleClass="ui-button-secondary"/>
                 </div>
