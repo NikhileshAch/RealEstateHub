@@ -113,9 +113,10 @@
                     <div class="form-row">
                         <div class="p-field">
                             <label for="address">Address *</label>
-                            <p:inputText id="address" value="#{propertyBean.address}" 
-                                       required="true" requiredMessage="Address is required" 
-                                       placeholder="123 Main St, Geneva"/>
+                            <p:inputText id="address" value="#{propertyBean.address}"
+                                         required="true" requiredMessage="Address is required"
+                                         placeholder="Start typing address..."
+                                         styleClass="address-input"/>
                             <p:message for="address"/>
                         </div>
                         
