@@ -36,8 +36,7 @@ public class BuyerResource {
                     dto.getEmail(),
                     dto.getUsername(),
                     dto.getPassword(),
-                    dto.getBudget() > 0 ? dto.getBudget() : 0.0
-            );
+                    dto.getBudget() > 0 ? dto.getBudget() : 0.0);
 
             BuyerEntity saved = buyerRepository.save(buyer);
 
@@ -121,8 +120,9 @@ public class BuyerResource {
     }
 
     /**
-     * Delete buyer
+     * Delete buyer account
      * DELETE /api/buyers/{id}
+     * This will cascade delete all offers made by this buyer.
      */
     @DELETE
     @Path("/{id}")
@@ -132,18 +132,19 @@ public class BuyerResource {
 
             if (buyer.isEmpty()) {
                 return Response.status(Response.Status.NOT_FOUND)
-                        .entity(new ErrorResponse("Buyer not found"))
+                        .entity(new ErrorResponse("Buyer account not found"))
                         .build();
             }
 
+            // Delete buyer (cascade will delete all offers)
             buyerRepository.delete(id);
 
             return Response.ok()
-                    .entity(new SuccessResponse("Buyer deleted successfully"))
+                    .entity(new SuccessResponse("Account deleted successfully"))
                     .build();
         } catch (Exception e) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity(new ErrorResponse("Invalid buyer ID"))
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(new ErrorResponse("Failed to delete account: " + e.getMessage()))
                     .build();
         }
     }
@@ -171,35 +172,88 @@ public class BuyerResource {
         private String password;
         private double budget;
 
-        public String getFirstName() { return firstName; }
-        public void setFirstName(String firstName) { this.firstName = firstName; }
-        public String getLastName() { return lastName; }
-        public void setLastName(String lastName) { this.lastName = lastName; }
-        public String getEmail() { return email; }
-        public void setEmail(String email) { this.email = email; }
-        public String getUsername() { return username; }
-        public void setUsername(String username) { this.username = username; }
-        public String getPassword() { return password; }
-        public void setPassword(String password) { this.password = password; }
-        public double getBudget() { return budget; }
-        public void setBudget(double budget) { this.budget = budget; }
+        public String getFirstName() {
+            return firstName;
+        }
+
+        public void setFirstName(String firstName) {
+            this.firstName = firstName;
+        }
+
+        public String getLastName() {
+            return lastName;
+        }
+
+        public void setLastName(String lastName) {
+            this.lastName = lastName;
+        }
+
+        public String getEmail() {
+            return email;
+        }
+
+        public void setEmail(String email) {
+            this.email = email;
+        }
+
+        public String getUsername() {
+            return username;
+        }
+
+        public void setUsername(String username) {
+            this.username = username;
+        }
+
+        public String getPassword() {
+            return password;
+        }
+
+        public void setPassword(String password) {
+            this.password = password;
+        }
+
+        public double getBudget() {
+            return budget;
+        }
+
+        public void setBudget(double budget) {
+            this.budget = budget;
+        }
     }
 
     public static class BudgetDTO {
         private double budget;
-        public double getBudget() { return budget; }
-        public void setBudget(double budget) { this.budget = budget; }
+
+        public double getBudget() {
+            return budget;
+        }
+
+        public void setBudget(double budget) {
+            this.budget = budget;
+        }
     }
 
     public static class ErrorResponse {
         private String error;
-        public ErrorResponse(String error) { this.error = error; }
-        public String getError() { return error; }
+
+        public ErrorResponse(String error) {
+            this.error = error;
+        }
+
+        public String getError() {
+            return error;
+        }
     }
 
     public static class SuccessResponse {
         private String message;
-        public SuccessResponse(String message) { this.message = message; }
-        public String getMessage() { return message; }
+
+        public SuccessResponse(String message) {
+            this.message = message;
+        }
+
+        public String getMessage() {
+            return message;
+        }
     }
 }

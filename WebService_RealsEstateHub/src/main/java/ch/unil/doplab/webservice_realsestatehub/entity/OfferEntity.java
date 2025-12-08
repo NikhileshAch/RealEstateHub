@@ -1,23 +1,38 @@
 package ch.unil.doplab.webservice_realsestatehub.entity;
 
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import java.util.UUID;
 
 @Entity
 @Table(name = "offers")
-public class OfferEntity {
+public class OfferEntity extends BaseEntity {
 
     @Id
     @Column(name = "offer_id", length = 36)
     private String offerId;
 
-    @Column(name = "property_id", length = 36, nullable = false)
-    private String propertyId;
+    /**
+     * Property this offer is for.
+     * Many offers can be made on one property.
+     */
+    @NotNull(message = "Offer must be for a property")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "property_id", nullable = false)
+    private PropertyEntity property;
 
-    @Column(name = "buyer_id", length = 36, nullable = false)
-    private String buyerId;
+    /**
+     * Buyer making this offer.
+     * Many offers can be made by one buyer.
+     */
+    @NotNull(message = "Offer must have a buyer")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "buyer_id", nullable = false)
+    private BuyerEntity buyer;
 
+    @NotNull(message = "Offer amount is required")
+    @Min(value = 0, message = "Offer amount must be positive")
     @Column(name = "amount", nullable = false)
     private Double amount;
 
@@ -28,23 +43,19 @@ public class OfferEntity {
     @Column(name = "status", length = 50)
     private OfferStatus status;
 
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
-
     public enum OfferStatus {
         PENDING, ACCEPTED, REJECTED, WITHDRAWN
     }
 
     public OfferEntity() {
         this.offerId = UUID.randomUUID().toString();
-        this.createdAt = LocalDateTime.now();
         this.status = OfferStatus.PENDING;
     }
 
-    public OfferEntity(String propertyId, String buyerId, Double amount, String message) {
+    public OfferEntity(PropertyEntity property, BuyerEntity buyer, Double amount, String message) {
         this();
-        this.propertyId = propertyId;
-        this.buyerId = buyerId;
+        this.property = property;
+        this.buyer = buyer;
         this.amount = amount;
         this.message = message;
     }
@@ -58,20 +69,20 @@ public class OfferEntity {
         this.offerId = offerId;
     }
 
-    public String getPropertyId() {
-        return propertyId;
+    public PropertyEntity getProperty() {
+        return property;
     }
 
-    public void setPropertyId(String propertyId) {
-        this.propertyId = propertyId;
+    public void setProperty(PropertyEntity property) {
+        this.property = property;
     }
 
-    public String getBuyerId() {
-        return buyerId;
+    public BuyerEntity getBuyer() {
+        return buyer;
     }
 
-    public void setBuyerId(String buyerId) {
-        this.buyerId = buyerId;
+    public void setBuyer(BuyerEntity buyer) {
+        this.buyer = buyer;
     }
 
     public Double getAmount() {
@@ -96,13 +107,5 @@ public class OfferEntity {
 
     public void setStatus(OfferStatus status) {
         this.status = status;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
     }
 }

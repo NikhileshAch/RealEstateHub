@@ -21,7 +21,7 @@ public class SellerResource {
 
     @Inject
     private SellerRepository sellerRepository;
-    
+
     @Inject
     private PropertyRepository propertyRepository;
 
@@ -39,8 +39,7 @@ public class SellerResource {
                 sellerDTO.lastName,
                 sellerDTO.email,
                 sellerDTO.username,
-                sellerDTO.password
-        );
+                sellerDTO.password);
 
         SellerEntity saved = sellerRepository.save(seller);
 
@@ -92,11 +91,16 @@ public class SellerResource {
             }
 
             SellerEntity seller = optSeller.get();
-            if (sellerDTO.firstName != null) seller.setFirstName(sellerDTO.firstName);
-            if (sellerDTO.lastName != null) seller.setLastName(sellerDTO.lastName);
-            if (sellerDTO.email != null) seller.setEmail(sellerDTO.email);
-            if (sellerDTO.username != null) seller.setUsername(sellerDTO.username);
-            if (sellerDTO.password != null) seller.setPassword(sellerDTO.password);
+            if (sellerDTO.firstName != null)
+                seller.setFirstName(sellerDTO.firstName);
+            if (sellerDTO.lastName != null)
+                seller.setLastName(sellerDTO.lastName);
+            if (sellerDTO.email != null)
+                seller.setEmail(sellerDTO.email);
+            if (sellerDTO.username != null)
+                seller.setUsername(sellerDTO.username);
+            if (sellerDTO.password != null)
+                seller.setPassword(sellerDTO.password);
 
             SellerEntity updated = sellerRepository.update(seller);
             return Response.ok(toDTO(updated)).build();
@@ -107,7 +111,12 @@ public class SellerResource {
         }
     }
 
-    // ===== DELETE =====
+    // ===== DELETE (Account Deletion) =====
+    /**
+     * Delete seller account
+     * DELETE /api/sellers/{id}
+     * This will cascade delete all properties and their offers.
+     */
     @DELETE
     @Path("/{id}")
     public Response deleteSeller(@PathParam("id") String id) {
@@ -116,15 +125,19 @@ public class SellerResource {
 
             if (seller.isEmpty()) {
                 return Response.status(Response.Status.NOT_FOUND)
-                        .entity(new ErrorResponse("Seller not found"))
+                        .entity(new ErrorResponse("Seller account not found"))
                         .build();
             }
 
+            // Delete seller (cascade will delete all properties and offers)
             sellerRepository.delete(id);
-            return Response.status(Response.Status.NO_CONTENT).build();
+
+            return Response.ok()
+                    .entity(new SuccessResponse("Account deleted successfully"))
+                    .build();
         } catch (Exception e) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity(new ErrorResponse("Invalid seller ID format"))
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(new ErrorResponse("Failed to delete account: " + e.getMessage()))
                     .build();
         }
     }
@@ -142,7 +155,8 @@ public class SellerResource {
                         .build();
             }
 
-            List<PropertyEntity> ownedProperties = propertyRepository.findByOwnerId(id);
+            // Use entity relationship to find properties
+            List<PropertyEntity> ownedProperties = propertyRepository.findByOwner(seller.get());
             List<Map<String, Object>> result = ownedProperties.stream()
                     .map(this::propertyToDTO)
                     .toList();
@@ -167,12 +181,13 @@ public class SellerResource {
         dto.put("role", "Seller");
         return dto;
     }
-    
+
     // Convert property entity to DTO map
     private Map<String, Object> propertyToDTO(PropertyEntity p) {
         Map<String, Object> dto = new HashMap<>();
         dto.put("propertyId", p.getPropertyId());
-        dto.put("ownerId", p.getOwnerId());
+        // Use entity relationship to get owner ID
+        dto.put("ownerId", p.getOwner() != null ? p.getOwner().getUserId() : null);
         dto.put("title", p.getTitle());
         dto.put("description", p.getDescription());
         dto.put("location", p.getLocation());
@@ -180,12 +195,12 @@ public class SellerResource {
         dto.put("size", p.getSize());
         dto.put("type", p.getType() != null ? p.getType().name() : null);
         dto.put("status", p.getStatus() != null ? p.getStatus().name() : null);
-        
+
         Map<String, Object> features = new HashMap<>();
         features.put("bedrooms", p.getBedrooms());
         features.put("bathrooms", p.getBathrooms());
         dto.put("features", features);
-        
+
         return dto;
     }
 
@@ -203,6 +218,14 @@ public class SellerResource {
 
         public ErrorResponse(String error) {
             this.error = error;
+        }
+    }
+
+    public static class SuccessResponse {
+        public String message;
+
+        public SuccessResponse(String message) {
+            this.message = message;
         }
     }
 }

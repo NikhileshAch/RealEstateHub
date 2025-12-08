@@ -1,32 +1,47 @@
 package ch.unil.doplab.webservice_realsestatehub.entity;
 
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
 @Table(name = "properties")
-public class PropertyEntity {
+public class PropertyEntity extends BaseEntity {
 
     @Id
     @Column(name = "property_id", length = 36)
     private String propertyId;
 
-    @Column(name = "owner_id", length = 36, nullable = false)
-    private String ownerId;
+    /**
+     * Owner of this property.
+     * Many properties can belong to one seller.
+     */
+    @NotNull(message = "Property must have an owner")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "owner_id", nullable = false)
+    private SellerEntity owner;
 
+    @NotBlank(message = "Title is required")
     @Column(name = "title", length = 255)
     private String title;
 
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
+    @NotBlank(message = "Location is required")
     @Column(name = "location", length = 255)
     private String location;
 
+    @NotNull(message = "Price is required")
+    @Min(value = 0, message = "Price must be positive")
     @Column(name = "price")
     private Double price;
 
+    @Min(value = 0, message = "Size must be positive")
     @Column(name = "size")
     private Double size;
 
@@ -53,11 +68,12 @@ public class PropertyEntity {
     @Column(name = "has_garden")
     private Boolean hasGarden;
 
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
+    /**
+     * Offers made on this property.
+     * Cascade delete: when property is deleted, all offers are deleted.
+     */
+    @OneToMany(mappedBy = "property", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<OfferEntity> offers = new ArrayList<>();
 
     public enum PropertyType {
         APARTMENT, HOUSE, VILLA, STUDIO, LOFT, TOWNHOUSE, CONDO, COMMERCIAL, OFFICE, OTHER
@@ -69,14 +85,7 @@ public class PropertyEntity {
 
     public PropertyEntity() {
         this.propertyId = UUID.randomUUID().toString();
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
         this.status = PropertyStatus.FOR_SALE;
-    }
-
-    @PreUpdate
-    public void preUpdate() {
-        this.updatedAt = LocalDateTime.now();
     }
 
     // Getters and Setters
@@ -88,12 +97,12 @@ public class PropertyEntity {
         this.propertyId = propertyId;
     }
 
-    public String getOwnerId() {
-        return ownerId;
+    public SellerEntity getOwner() {
+        return owner;
     }
 
-    public void setOwnerId(String ownerId) {
-        this.ownerId = ownerId;
+    public void setOwner(SellerEntity owner) {
+        this.owner = owner;
     }
 
     public String getTitle() {
@@ -192,19 +201,11 @@ public class PropertyEntity {
         this.hasGarden = hasGarden;
     }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
+    public List<OfferEntity> getOffers() {
+        return offers;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
+    public void setOffers(List<OfferEntity> offers) {
+        this.offers = offers;
     }
 }

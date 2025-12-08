@@ -1,32 +1,36 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:f="http://xmlns.jcp.org/jsf/core"
-      xmlns:p="http://primefaces.org/ui">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:p="http://primefaces.org/ui">
 <h:head>
     <title>My Properties - RealEstateHub</title>
-    <h:outputStylesheet library="css" name="style.css"/>
+    <h:outputStylesheet library="css" name="style.css" />
     <style>
-        .ui-selectonemenu, .ui-inputtext {
+        .ui-selectonemenu,
+        .ui-inputtext {
             width: 100% !important;
         }
+
         .filter-card {
             margin-bottom: 20px;
         }
+
         .p-field {
             margin-bottom: 15px;
         }
+
         .p-field label {
             display: block;
             margin-bottom: 5px;
             font-weight: 600;
             color: #1a2a4a;
         }
+
         .action-buttons {
             display: flex;
             gap: 5px;
             justify-content: center;
         }
+
         .content-wrapper {
             padding: 20px 40px;
         }
@@ -34,9 +38,9 @@
 </h:head>
 <h:body>
     <f:metadata>
-        <f:viewAction action="#{propertyBean.loadMyProperties()}"/>
+        <f:viewAction action="#{propertyBean.loadMyProperties()}" />
     </f:metadata>
-    
+
     <div class="container">
         <!-- Navigation Bar -->
         <div class="navbar">
@@ -44,21 +48,23 @@
             <div class="navbar-user">
                 <span class="user-info">Welcome, #{sessionBean.userFullName}!</span>
                 <h:form>
-                    <p:commandButton value="Add Property" action="/seller/add-property?faces-redirect=true" 
-                                   icon="pi pi-plus" styleClass="ui-button-success"/>
-                    <p:commandButton value="Manage Offers" action="/seller/manage-offers?faces-redirect=true" 
-                                   icon="pi pi-list" styleClass="ui-button-secondary"/>
-                    <p:commandButton value="Logout" action="#{sessionBean.logout()}" 
-                                   icon="pi pi-sign-out" styleClass="ui-button-danger" ajax="false"/>
+                    <p:commandButton value="Add Property" action="/seller/add-property?faces-redirect=true"
+                        icon="pi pi-plus" styleClass="ui-button-success" />
+                    <p:commandButton value="Manage Offers" action="/seller/manage-offers?faces-redirect=true"
+                        icon="pi pi-list" styleClass="ui-button-secondary" />
+                    <p:commandButton value="Account Settings" action="/seller/account-settings?faces-redirect=true"
+                        icon="pi pi-cog" styleClass="ui-button-secondary" />
+                    <p:commandButton value="Logout" action="#{sessionBean.logout()}" icon="pi pi-sign-out"
+                        styleClass="ui-button-danger" ajax="false" />
                 </h:form>
             </div>
         </div>
-        
+
         <h1>My Properties</h1>
         <p>Manage your property listings</p>
-        
-        <p:growl id="messages" showDetail="true" life="3000"/>
-        
+
+        <p:growl id="messages" showDetail="true" life="3000" />
+
         <h:form id="mainForm">
             <!-- Filter Panel with PrimeFaces -->
             <p:panel header="Filter Properties" toggleable="true" styleClass="filter-card">
@@ -67,107 +73,112 @@
                         <div class="p-field">
                             <label for="filterStatus">Status</label>
                             <p:selectOneMenu id="filterStatus" value="#{propertyBean.filterStatus}">
-                                <f:selectItem itemValue="" itemLabel="All Status"/>
-                                <f:selectItem itemValue="FOR_SALE" itemLabel="For Sale"/>
-                                <f:selectItem itemValue="PENDING" itemLabel="Pending"/>
-                                <f:selectItem itemValue="SOLD" itemLabel="Sold"/>
-                                <f:selectItem itemValue="OFF_MARKET" itemLabel="Off Market"/>
+                                <f:selectItem itemValue="" itemLabel="All Status" />
+                                <f:selectItem itemValue="FOR_SALE" itemLabel="For Sale" />
+                                <f:selectItem itemValue="PENDING" itemLabel="Pending" />
+                                <f:selectItem itemValue="SOLD" itemLabel="Sold" />
+                                <f:selectItem itemValue="OFF_MARKET" itemLabel="Off Market" />
                             </p:selectOneMenu>
                         </div>
                     </div>
-                    
+
                     <div class="p-col-12 p-md-3">
                         <div class="p-field">
                             <label for="filterType">Property Type</label>
-                            <p:selectOneMenu id="filterType" value="#{propertyBean.filterType}" filter="true" filterMatchMode="contains">
-                                <f:selectItem itemValue="" itemLabel="All Types"/>
-                                <f:selectItem itemValue="HOUSE" itemLabel="House"/>
-                                <f:selectItem itemValue="APARTMENT" itemLabel="Apartment"/>
-                                <f:selectItem itemValue="CONDO" itemLabel="Condo"/>
-                                <f:selectItem itemValue="TOWNHOUSE" itemLabel="Townhouse"/>
-                                <f:selectItem itemValue="LAND" itemLabel="Land"/>
+                            <p:selectOneMenu id="filterType" value="#{propertyBean.filterType}" filter="true"
+                                filterMatchMode="contains">
+                                <f:selectItem itemValue="" itemLabel="All Types" />
+                                <f:selectItem itemValue="HOUSE" itemLabel="House" />
+                                <f:selectItem itemValue="APARTMENT" itemLabel="Apartment" />
+                                <f:selectItem itemValue="CONDO" itemLabel="Condo" />
+                                <f:selectItem itemValue="TOWNHOUSE" itemLabel="Townhouse" />
+                                <f:selectItem itemValue="LAND" itemLabel="Land" />
                             </p:selectOneMenu>
                         </div>
                     </div>
-                    
+
                     <div class="p-col-12 p-md-6">
                         <div class="p-field">
                             <label>&#160;</label>
                             <div style="display: flex; gap: 10px;">
-                                <p:commandButton value="Apply Filters" icon="pi pi-search"
-                                               update="propertiesPanel" styleClass="ui-button-primary"/>
+                                <p:commandButton value="Apply Filters" icon="pi pi-search" update="propertiesPanel"
+                                    styleClass="ui-button-primary" />
                                 <p:commandButton value="Clear" icon="pi pi-filter-slash"
-                                               action="#{propertyBean.clearFilters()}" 
-                                               update="@form" styleClass="ui-button-warning"/>
+                                    action="#{propertyBean.clearFilters()}" update="@form"
+                                    styleClass="ui-button-warning" />
                             </div>
                         </div>
                     </div>
                 </div>
             </p:panel>
-            
+
             <!-- Properties DataTable with PrimeFaces -->
             <p:panel id="propertiesPanel" header="My Properties (#{propertyBean.filteredProperties.size()})">
                 <p:dataTable id="propertiesTable" value="#{propertyBean.filteredProperties}" var="property"
-                           emptyMessage="You haven't added any properties yet."
-                           rowHover="true" stripedRows="true"
-                           resizableColumns="true" reflow="true">
-                    
+                    emptyMessage="You haven't added any properties yet." rowHover="true" stripedRows="true"
+                    resizableColumns="true" reflow="true">
+
                     <p:column headerText="Location">
-                        <h:outputText value="#{property.location}"/>
+                        <h:outputText value="#{property.location}" />
                     </p:column>
-                    
+
                     <p:column headerText="Price">
-                        <h:outputText value="#{propertyBean.formatPrice(property.price)}" style="font-weight: bold; color: #28a745;"/>
+                        <h:outputText value="#{propertyBean.formatPrice(property.price)}"
+                            style="font-weight: bold; color: #28a745;" />
                     </p:column>
-                    
+
                     <p:column headerText="Type">
-                        <p:tag value="#{property.type}" severity="info"/>
+                        <p:tag value="#{property.type}" severity="info" />
                     </p:column>
-                    
+
                     <p:column headerText="Status">
-                        <p:tag value="#{property.status}" 
-                              severity="#{property.status == 'FOR_SALE' ? 'success' : (property.status == 'PENDING' ? 'warning' : (property.status == 'SOLD' ? 'danger' : 'secondary'))}"/>
+                        <p:tag value="#{property.status}"
+                            severity="#{property.status == 'FOR_SALE' ? 'success' : (property.status == 'PENDING' ? 'warning' : (property.status == 'SOLD' ? 'danger' : 'secondary'))}" />
                     </p:column>
-                    
+
                     <p:column headerText="Beds/Baths">
                         <span>#{property.features['bedrooms']} / #{property.features['bathrooms']}</span>
                     </p:column>
-                    
+
                     <p:column headerText="Size">
-                        <h:outputText value="#{property.size} sqm"/>
+                        <h:outputText value="#{property.size} sqm" />
                     </p:column>
-                    
+
                     <p:column headerText="Actions" style="text-align: center; width: 250px;">
                         <div class="action-buttons">
                             <p:commandButton value="Edit" icon="pi pi-pencil"
-                                           action="#{propertyBean.editProperty(property)}"
-                                           ajax="false"
-                                           styleClass="ui-button-primary"/>
+                                action="#{propertyBean.editProperty(property)}" ajax="false"
+                                styleClass="ui-button-primary" />
                             <p:commandButton value="Delete" icon="pi pi-trash"
-                                           action="#{propertyBean.deleteProperty(property)}"
-                                           update="@form" styleClass="ui-button-danger">
-                                <p:confirm header="Confirm Delete" message="Are you sure you want to delete this property?" icon="pi pi-exclamation-triangle"/>
+                                action="#{propertyBean.deleteProperty(property)}" update="@form"
+                                styleClass="ui-button-danger">
+                                <p:confirm header="Confirm Delete"
+                                    message="Are you sure you want to delete this property?"
+                                    icon="pi pi-exclamation-triangle" />
                             </p:commandButton>
-                            <p:linkButton value="Offers" icon="pi pi-list"
-                                        outcome="/seller/manage-offers" styleClass="ui-button-secondary">
-                                <f:param name="propertyId" value="#{property.propertyId}"/>
+                            <p:linkButton value="Offers" icon="pi pi-list" outcome="/seller/manage-offers"
+                                styleClass="ui-button-secondary">
+                                <f:param name="propertyId" value="#{property.propertyId}" />
                             </p:linkButton>
                         </div>
                     </p:column>
                 </p:dataTable>
-                
+
                 <p:panel rendered="#{empty propertyBean.filteredProperties}" style="text-align: center; padding: 40px;">
                     <p style="color: #999;">You haven't added any properties yet.</p>
-                    <p:commandButton value="Add Your First Property" action="/seller/add-property?faces-redirect=true" 
-                                   icon="pi pi-plus" styleClass="ui-button-success"/>
+                    <p:commandButton value="Add Your First Property" action="/seller/add-property?faces-redirect=true"
+                        icon="pi pi-plus" styleClass="ui-button-success" />
                 </p:panel>
             </p:panel>
-            
+
             <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
-                <p:commandButton value="Yes" type="button" styleClass="ui-button-danger ui-confirmdialog-yes" icon="pi pi-check"/>
-                <p:commandButton value="No" type="button" styleClass="ui-button-secondary ui-confirmdialog-no" icon="pi pi-times"/>
+                <p:commandButton value="Yes" type="button" styleClass="ui-button-danger ui-confirmdialog-yes"
+                    icon="pi pi-check" />
+                <p:commandButton value="No" type="button" styleClass="ui-button-secondary ui-confirmdialog-no"
+                    icon="pi pi-times" />
             </p:confirmDialog>
         </h:form>
     </div>
 </h:body>
+
 </html>

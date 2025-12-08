@@ -22,10 +22,10 @@ public class OfferResource {
 
     @Inject
     private OfferRepository offerRepository;
-    
+
     @Inject
     private PropertyRepository propertyRepository;
-    
+
     @Inject
     private BuyerRepository buyerRepository;
 
@@ -41,16 +41,42 @@ public class OfferResource {
                         .entity(new ErrorResponse("Amount must be positive"))
                         .build();
             }
-            
+
+            // Validate and fetch property entity
+            if (dto.getPropertyId() == null || dto.getPropertyId().isEmpty()) {
+                return Response.status(Response.Status.BAD_REQUEST)
+                        .entity(new ErrorResponse("Property ID is required"))
+                        .build();
+            }
+            Optional<PropertyEntity> property = propertyRepository.findById(dto.getPropertyId());
+            if (property.isEmpty()) {
+                return Response.status(Response.Status.BAD_REQUEST)
+                        .entity(new ErrorResponse("Invalid property ID"))
+                        .build();
+            }
+
+            // Validate and fetch buyer entity
+            if (dto.getBuyerId() == null || dto.getBuyerId().isEmpty()) {
+                return Response.status(Response.Status.BAD_REQUEST)
+                        .entity(new ErrorResponse("Buyer ID is required"))
+                        .build();
+            }
+            Optional<BuyerEntity> buyer = buyerRepository.findById(dto.getBuyerId());
+            if (buyer.isEmpty()) {
+                return Response.status(Response.Status.BAD_REQUEST)
+                        .entity(new ErrorResponse("Invalid buyer ID"))
+                        .build();
+            }
+
+            // Create offer with entity relationships
             OfferEntity offer = new OfferEntity(
-                    dto.getPropertyId() != null ? dto.getPropertyId().toString() : null,
-                    dto.getBuyerId() != null ? dto.getBuyerId().toString() : null,
+                    property.get(),
+                    buyer.get(),
                     dto.getAmount(),
-                    dto.getMessage()
-            );
-            
+                    dto.getMessage());
+
             OfferEntity saved = offerRepository.save(offer);
-            
+
             return Response.status(Response.Status.CREATED)
                     .entity(toDTO(saved))
                     .build();
@@ -81,13 +107,13 @@ public class OfferResource {
     public Response getOfferById(@PathParam("id") String id) {
         try {
             Optional<OfferEntity> offer = offerRepository.findById(id);
-            
+
             if (offer.isEmpty()) {
                 return Response.status(Response.Status.NOT_FOUND)
                         .entity(new ErrorResponse("Offer not found"))
                         .build();
             }
-            
+
             return Response.ok(toDTO(offer.get())).build();
         } catch (Exception e) {
             return Response.status(Response.Status.BAD_REQUEST)
@@ -105,62 +131,60 @@ public class OfferResource {
     public Response updateOfferStatus(@PathParam("id") String id, StatusDTO statusDto) {
         try {
             Optional<OfferEntity> optOffer = offerRepository.findById(id);
-            
+
             if (optOffer.isEmpty()) {
                 return Response.status(Response.Status.NOT_FOUND)
                         .entity(new ErrorResponse("Offer not found"))
                         .build();
             }
-            
+
             OfferEntity offer = optOffer.get();
             OfferEntity.OfferStatus oldStatus = offer.getStatus();
             OfferEntity.OfferStatus newStatus = OfferEntity.OfferStatus.valueOf(statusDto.getStatus());
             offer.setStatus(newStatus);
-            
+
             // If offer is ACCEPTED, update property status to SOLD
             if (newStatus == OfferEntity.OfferStatus.ACCEPTED) {
                 try {
-                    Optional<PropertyEntity> property = propertyRepository.findById(offer.getPropertyId());
-                    if (property.isPresent()) {
-                        PropertyEntity p = property.get();
-                        p.setStatus(PropertyEntity.PropertyStatus.SOLD);
-                        propertyRepository.update(p);
-                        System.out.println("Property " + offer.getPropertyId() + " marked as SOLD");
+                    PropertyEntity property = offer.getProperty();
+                    if (property != null) {
+                        property.setStatus(PropertyEntity.PropertyStatus.SOLD);
+                        propertyRepository.update(property);
+                        System.out.println("Property " + property.getPropertyId() + " marked as SOLD");
                     }
                 } catch (Exception e) {
                     System.err.println("Error updating property status: " + e.getMessage());
                 }
             }
-            
+
             OfferEntity updated = offerRepository.update(offer);
-            
+
             // Get buyer's email for notification
             String buyerEmail = "nikhilesh.acharya@unil.ch";
             try {
-                Optional<BuyerEntity> buyer = buyerRepository.findById(offer.getBuyerId());
-                if (buyer.isPresent() && buyer.get().getEmail() != null) {
-                    buyerEmail = buyer.get().getEmail();
+                BuyerEntity buyer = offer.getBuyer();
+                if (buyer != null && buyer.getEmail() != null) {
+                    buyerEmail = buyer.getEmail();
                 }
             } catch (Exception e) {
                 System.out.println("Could not fetch buyer email, using default");
             }
-            
+
+            String propertyId = offer.getProperty() != null ? offer.getProperty().getPropertyId() : "unknown";
             boolean emailSent = EmailNotificationService.sendOfferStatusNotification(
-                id,
-                offer.getPropertyId(),
-                oldStatus.toString(),
-                newStatus.toString(),
-                buyerEmail,
-                "seller@realestatehub.com"
-            );
-            
+                    id,
+                    propertyId,
+                    oldStatus.toString(),
+                    newStatus.toString(),
+                    buyerEmail,
+                    "seller@realestatehub.com");
+
             Map<String, Object> response = new HashMap<>();
             response.put("offer", toDTO(updated));
             response.put("emailNotificationSent", emailSent);
-            response.put("message", emailSent ? 
-                "Offer status updated and email notifications sent via external API" : 
-                "Offer status updated but email notification failed");
-            
+            response.put("message", emailSent ? "Offer status updated and email notifications sent via external API"
+                    : "Offer status updated but email notification failed");
+
             return Response.ok(response).build();
         } catch (IllegalArgumentException e) {
             return Response.status(Response.Status.BAD_REQUEST)
@@ -178,15 +202,15 @@ public class OfferResource {
     public Response deleteOffer(@PathParam("id") String id) {
         try {
             Optional<OfferEntity> offer = offerRepository.findById(id);
-            
+
             if (offer.isEmpty()) {
                 return Response.status(Response.Status.NOT_FOUND)
                         .entity(new ErrorResponse("Offer not found"))
                         .build();
             }
-            
+
             offerRepository.delete(id);
-            
+
             return Response.ok()
                     .entity(new SuccessResponse("Offer deleted successfully"))
                     .build();
@@ -205,7 +229,14 @@ public class OfferResource {
     @Path("/property/{propertyId}")
     public Response getOffersByProperty(@PathParam("propertyId") String propertyId) {
         try {
-            List<OfferEntity> propertyOffers = offerRepository.findByPropertyId(propertyId);
+            Optional<PropertyEntity> property = propertyRepository.findById(propertyId);
+            if (property.isEmpty()) {
+                return Response.status(Response.Status.NOT_FOUND)
+                        .entity(new ErrorResponse("Property not found"))
+                        .build();
+            }
+
+            List<OfferEntity> propertyOffers = offerRepository.findByProperty(property.get());
             List<Map<String, Object>> result = propertyOffers.stream().map(this::toDTO).toList();
             return Response.ok(result).build();
         } catch (Exception e) {
@@ -219,8 +250,9 @@ public class OfferResource {
     private Map<String, Object> toDTO(OfferEntity o) {
         Map<String, Object> dto = new HashMap<>();
         dto.put("offerId", o.getOfferId());
-        dto.put("propertyId", o.getPropertyId());
-        dto.put("buyerId", o.getBuyerId());
+        // Use entity relationships to get IDs
+        dto.put("propertyId", o.getProperty() != null ? o.getProperty().getPropertyId() : null);
+        dto.put("buyerId", o.getBuyer() != null ? o.getBuyer().getUserId() : null);
         dto.put("amount", o.getAmount());
         dto.put("message", o.getMessage());
         dto.put("status", o.getStatus() != null ? o.getStatus().name() : null);
@@ -230,40 +262,77 @@ public class OfferResource {
 
     // DTOs
     public static class OfferDTO {
-        private UUID propertyId;
-        private UUID buyerId;
+        private String propertyId;
+        private String buyerId;
         private double amount;
         private String message;
 
-        public UUID getPropertyId() { return propertyId; }
-        public void setPropertyId(UUID propertyId) { this.propertyId = propertyId; }
-        
-        public UUID getBuyerId() { return buyerId; }
-        public void setBuyerId(UUID buyerId) { this.buyerId = buyerId; }
-        
-        public double getAmount() { return amount; }
-        public void setAmount(double amount) { this.amount = amount; }
-        
-        public String getMessage() { return message; }
-        public void setMessage(String message) { this.message = message; }
+        public String getPropertyId() {
+            return propertyId;
+        }
+
+        public void setPropertyId(String propertyId) {
+            this.propertyId = propertyId;
+        }
+
+        public String getBuyerId() {
+            return buyerId;
+        }
+
+        public void setBuyerId(String buyerId) {
+            this.buyerId = buyerId;
+        }
+
+        public double getAmount() {
+            return amount;
+        }
+
+        public void setAmount(double amount) {
+            this.amount = amount;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+
+        public void setMessage(String message) {
+            this.message = message;
+        }
     }
 
     public static class StatusDTO {
         private String status;
-        
-        public String getStatus() { return status; }
-        public void setStatus(String status) { this.status = status; }
+
+        public String getStatus() {
+            return status;
+        }
+
+        public void setStatus(String status) {
+            this.status = status;
+        }
     }
 
     public static class ErrorResponse {
         private String error;
-        public ErrorResponse(String error) { this.error = error; }
-        public String getError() { return error; }
+
+        public ErrorResponse(String error) {
+            this.error = error;
+        }
+
+        public String getError() {
+            return error;
+        }
     }
 
     public static class SuccessResponse {
         private String message;
-        public SuccessResponse(String message) { this.message = message; }
-        public String getMessage() { return message; }
+
+        public SuccessResponse(String message) {
+            this.message = message;
+        }
+
+        public String getMessage() {
+            return message;
+        }
     }
 }

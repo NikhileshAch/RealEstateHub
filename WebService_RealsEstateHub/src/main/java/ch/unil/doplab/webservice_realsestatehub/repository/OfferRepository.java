@@ -1,137 +1,74 @@
 package ch.unil.doplab.webservice_realsestatehub.repository;
 
+import ch.unil.doplab.webservice_realsestatehub.entity.BuyerEntity;
 import ch.unil.doplab.webservice_realsestatehub.entity.OfferEntity;
+import ch.unil.doplab.webservice_realsestatehub.entity.PropertyEntity;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.Persistence;
+import jakarta.persistence.PersistenceContext;
+import jakarta.transaction.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Repository for Offer entity operations.
+ * Uses container-managed persistence with @PersistenceContext.
+ */
 @ApplicationScoped
 public class OfferRepository {
 
-    private static final EntityManagerFactory emf = Persistence.createEntityManagerFactory("RealEstateHubPU");
-
-    private EntityManager getEntityManager() {
-        return emf.createEntityManager();
-    }
+    @PersistenceContext(unitName = "RealEstateHubPU")
+    private EntityManager em;
 
     public List<OfferEntity> findAll() {
-        EntityManager em = getEntityManager();
-        try {
-            return em.createQuery("SELECT o FROM OfferEntity o", OfferEntity.class)
-                    .getResultList();
-        } finally {
-            em.close();
-        }
+        return em.createQuery("SELECT o FROM OfferEntity o", OfferEntity.class)
+                .getResultList();
     }
 
     public Optional<OfferEntity> findById(String id) {
-        EntityManager em = getEntityManager();
-        try {
-            OfferEntity offer = em.find(OfferEntity.class, id);
-            return Optional.ofNullable(offer);
-        } finally {
-            em.close();
-        }
+        OfferEntity offer = em.find(OfferEntity.class, id);
+        return Optional.ofNullable(offer);
     }
 
-    public List<OfferEntity> findByPropertyId(String propertyId) {
-        EntityManager em = getEntityManager();
-        try {
-            return em.createQuery("SELECT o FROM OfferEntity o WHERE o.propertyId = :propertyId", OfferEntity.class)
-                    .setParameter("propertyId", propertyId)
-                    .getResultList();
-        } finally {
-            em.close();
-        }
+    /**
+     * Find offers for a specific property.
+     */
+    public List<OfferEntity> findByProperty(PropertyEntity property) {
+        return em.createQuery("SELECT o FROM OfferEntity o WHERE o.property = :property", OfferEntity.class)
+                .setParameter("property", property)
+                .getResultList();
     }
 
-    public List<OfferEntity> findByBuyerId(String buyerId) {
-        EntityManager em = getEntityManager();
-        try {
-            return em.createQuery("SELECT o FROM OfferEntity o WHERE o.buyerId = :buyerId", OfferEntity.class)
-                    .setParameter("buyerId", buyerId)
-                    .getResultList();
-        } finally {
-            em.close();
-        }
+    /**
+     * Find offers made by a specific buyer.
+     */
+    public List<OfferEntity> findByBuyer(BuyerEntity buyer) {
+        return em.createQuery("SELECT o FROM OfferEntity o WHERE o.buyer = :buyer", OfferEntity.class)
+                .setParameter("buyer", buyer)
+                .getResultList();
     }
 
+    @Transactional
     public OfferEntity save(OfferEntity offer) {
-        EntityManager em = getEntityManager();
-        try {
-            em.getTransaction().begin();
-            if (em.find(OfferEntity.class, offer.getOfferId()) != null) {
-                offer = em.merge(offer);
-            } else {
-                em.persist(offer);
-            }
-            em.getTransaction().commit();
+        if (em.find(OfferEntity.class, offer.getOfferId()) != null) {
+            return em.merge(offer);
+        } else {
+            em.persist(offer);
             return offer;
-        } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-            throw e;
-        } finally {
-            em.close();
         }
     }
 
+    @Transactional
     public OfferEntity update(OfferEntity offer) {
-        EntityManager em = getEntityManager();
-        try {
-            em.getTransaction().begin();
-            offer = em.merge(offer);
-            em.getTransaction().commit();
-            return offer;
-        } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-            throw e;
-        } finally {
-            em.close();
-        }
+        return em.merge(offer);
     }
 
+    @Transactional
     public void delete(String id) {
-        EntityManager em = getEntityManager();
-        try {
-            em.getTransaction().begin();
-            OfferEntity offer = em.find(OfferEntity.class, id);
-            if (offer != null) {
-                em.remove(offer);
-            }
-            em.getTransaction().commit();
-        } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-            throw e;
-        } finally {
-            em.close();
-        }
-    }
-
-    public void deleteByPropertyId(String propertyId) {
-        EntityManager em = getEntityManager();
-        try {
-            em.getTransaction().begin();
-            em.createQuery("DELETE FROM OfferEntity o WHERE o.propertyId = :propertyId")
-                    .setParameter("propertyId", propertyId)
-                    .executeUpdate();
-            em.getTransaction().commit();
-        } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-            throw e;
-        } finally {
-            em.close();
+        OfferEntity offer = em.find(OfferEntity.class, id);
+        if (offer != null) {
+            em.remove(offer);
         }
     }
 }

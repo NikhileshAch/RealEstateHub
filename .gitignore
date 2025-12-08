@@ -43,3 +43,9 @@ build/
 
 ### MySQL JDBC Driver ###
 mysql-connector-j-*.jar
+
+### Large Media Files ###
+*.mp4
+*.mov
+*.avi
+WebApplication/src/main/webapp/resources/videos/

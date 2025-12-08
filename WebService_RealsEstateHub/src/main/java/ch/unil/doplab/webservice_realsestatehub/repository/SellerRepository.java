@@ -3,119 +3,90 @@ package ch.unil.doplab.webservice_realsestatehub.repository;
 import ch.unil.doplab.webservice_realsestatehub.entity.SellerEntity;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.Persistence;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
+import jakarta.transaction.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Repository for Seller entity operations.
+ * Uses container-managed persistence with @PersistenceContext.
+ */
 @ApplicationScoped
 public class SellerRepository {
 
-    private static final EntityManagerFactory emf = Persistence.createEntityManagerFactory("RealEstateHubPU");
+    @PersistenceContext(unitName = "RealEstateHubPU")
+    private EntityManager em;
 
-    private EntityManager getEntityManager() {
-        return emf.createEntityManager();
-    }
-
+    /**
+     * Find all sellers.
+     */
     public List<SellerEntity> findAll() {
-        EntityManager em = getEntityManager();
-        try {
-            return em.createQuery("SELECT s FROM SellerEntity s", SellerEntity.class)
-                    .getResultList();
-        } finally {
-            em.close();
-        }
+        return em.createQuery("SELECT s FROM SellerEntity s", SellerEntity.class)
+                .getResultList();
     }
 
+    /**
+     * Find seller by ID.
+     */
     public Optional<SellerEntity> findById(String id) {
-        EntityManager em = getEntityManager();
-        try {
-            SellerEntity seller = em.find(SellerEntity.class, id);
-            return Optional.ofNullable(seller);
-        } finally {
-            em.close();
-        }
+        SellerEntity seller = em.find(SellerEntity.class, id);
+        return Optional.ofNullable(seller);
     }
 
+    /**
+     * Find seller by email using named query.
+     */
     public Optional<SellerEntity> findByEmail(String email) {
-        EntityManager em = getEntityManager();
-        try {
-            List<SellerEntity> results = em.createQuery("SELECT s FROM SellerEntity s WHERE s.email = :email", SellerEntity.class)
-                    .setParameter("email", email)
-                    .getResultList();
-            return results.isEmpty() ? Optional.empty() : Optional.of(results.get(0));
-        } finally {
-            em.close();
-        }
+        TypedQuery<SellerEntity> query = em.createNamedQuery("Seller.findByEmail", SellerEntity.class);
+        query.setParameter("email", email);
+        List<SellerEntity> results = query.getResultList();
+        return results.isEmpty() ? Optional.empty() : Optional.of(results.get(0));
     }
 
+    /**
+     * Find seller by username using named query.
+     */
     public Optional<SellerEntity> findByUsername(String username) {
-        EntityManager em = getEntityManager();
-        try {
-            List<SellerEntity> results = em.createQuery("SELECT s FROM SellerEntity s WHERE s.username = :username", SellerEntity.class)
-                    .setParameter("username", username)
-                    .getResultList();
-            return results.isEmpty() ? Optional.empty() : Optional.of(results.get(0));
-        } finally {
-            em.close();
-        }
+        TypedQuery<SellerEntity> query = em.createNamedQuery("Seller.findByUsername", SellerEntity.class);
+        query.setParameter("username", username);
+        List<SellerEntity> results = query.getResultList();
+        return results.isEmpty() ? Optional.empty() : Optional.of(results.get(0));
     }
 
+    /**
+     * Save (create or update) a seller.
+     */
+    @Transactional
     public SellerEntity save(SellerEntity seller) {
-        EntityManager em = getEntityManager();
-        try {
-            em.getTransaction().begin();
-            if (em.find(SellerEntity.class, seller.getUserId()) != null) {
-                seller = em.merge(seller);
-            } else {
-                em.persist(seller);
-            }
-            em.getTransaction().commit();
+        if (em.find(SellerEntity.class, seller.getUserId()) != null) {
+            return em.merge(seller);
+        } else {
+            em.persist(seller);
             return seller;
-        } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-            throw e;
-        } finally {
-            em.close();
         }
     }
 
+    /**
+     * Update an existing seller.
+     */
+    @Transactional
     public SellerEntity update(SellerEntity seller) {
-        EntityManager em = getEntityManager();
-        try {
-            em.getTransaction().begin();
-            seller = em.merge(seller);
-            em.getTransaction().commit();
-            return seller;
-        } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-            throw e;
-        } finally {
-            em.close();
-        }
+        return em.merge(seller);
     }
 
+    /**
+     * Delete a seller by ID.
+     * Cascade delete will automatically remove all associated properties and
+     * offers.
+     */
+    @Transactional
     public void delete(String id) {
-        EntityManager em = getEntityManager();
-        try {
-            em.getTransaction().begin();
-            SellerEntity seller = em.find(SellerEntity.class, id);
-            if (seller != null) {
-                em.remove(seller);
-            }
-            em.getTransaction().commit();
-        } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-            throw e;
-        } finally {
-            em.close();
+        SellerEntity seller = em.find(SellerEntity.class, id);
+        if (seller != null) {
+            em.remove(seller);
         }
     }
 }
