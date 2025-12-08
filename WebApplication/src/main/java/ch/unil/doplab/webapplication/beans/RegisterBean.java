@@ -75,20 +75,31 @@ public class RegisterBean implements Serializable {
                 sessionBean.setUser(createdUser);
                 sessionBean.setUserRole(selectedRole);
                 
-                // Also store in HTTP session for AuthenticationFilter
-                FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("user", createdUser);
-                FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("userRole", selectedRole);
+                // Store in HTTP session for AuthenticationFilter
+                FacesContext context = FacesContext.getCurrentInstance();
+                jakarta.servlet.http.HttpSession httpSession = 
+                    (jakarta.servlet.http.HttpSession) context.getExternalContext().getSession(false);
+                httpSession.setAttribute("user", createdUser);
+                httpSession.setAttribute("userRole", selectedRole);
                 
                 client.close();
                 
                 addMessage(FacesMessage.SEVERITY_INFO, "Success", "Registration successful! Welcome " + firstName);
                 
-                // Redirect based on role
-                if ("BUYER".equals(selectedRole)) {
-                    return "/buyer/properties?faces-redirect=true";
-                } else {
-                    return "/seller/my-properties?faces-redirect=true";
+                // Use sendRedirect directly on HttpServletResponse to bypass JSF Flash scope
+                try {
+                    jakarta.servlet.http.HttpServletResponse httpResponse = 
+                        (jakarta.servlet.http.HttpServletResponse) context.getExternalContext().getResponse();
+                    String contextPath = context.getExternalContext().getRequestContextPath();
+                    String redirectUrl = "BUYER".equals(selectedRole) 
+                        ? contextPath + "/buyer/properties.xhtml" 
+                        : contextPath + "/seller/my-properties.xhtml";
+                    httpResponse.sendRedirect(redirectUrl);
+                    context.responseComplete();
+                } catch (java.io.IOException e) {
+                    // Redirect failed, fallback
                 }
+                return null;
             } else {
                 client.close();
                 addMessage(FacesMessage.SEVERITY_ERROR, "Error", "Registration failed. Please try again.");

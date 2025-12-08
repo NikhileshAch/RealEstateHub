@@ -34,11 +34,7 @@ public class LoginBean implements Serializable {
     
     @jakarta.annotation.PostConstruct
     public void init() {
-        // Check if there's an error message in flash scope
-        Object flashError = FacesContext.getCurrentInstance().getExternalContext().getFlash().get("loginError");
-        if (flashError != null) {
-            this.errorMessage = flashError.toString();
-        }
+        // Flash scope not needed in init
     }
     
     public String login() {
@@ -46,13 +42,13 @@ public class LoginBean implements Serializable {
             errorMessage = null; // Clear previous error
             
             if (email == null || email.trim().isEmpty() || password == null || password.trim().isEmpty()) {
-                setError("Email and password are required");
-                return "/login?faces-redirect=true";
+                addMessage(FacesMessage.SEVERITY_ERROR, "Error", "Email and password are required");
+                return null;
             }
             
             if (selectedRole == null || selectedRole.trim().isEmpty()) {
-                setError("Please select a role");
-                return "/login?faces-redirect=true";
+                addMessage(FacesMessage.SEVERITY_ERROR, "Error", "Please select a role");
+                return null;
             }
             
             // Choose API based on role
@@ -89,40 +85,61 @@ public class LoginBean implements Serializable {
                 sessionBean.setUserRole(selectedRole);
                 
                 // Also store in HTTP session for AuthenticationFilter
-                FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("user", foundUser);
-                FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("userRole", selectedRole);
+                FacesContext context = FacesContext.getCurrentInstance();
+                jakarta.servlet.http.HttpSession httpSession = 
+                    (jakarta.servlet.http.HttpSession) context.getExternalContext().getSession(false);
+                httpSession.setAttribute("user", foundUser);
+                httpSession.setAttribute("userRole", selectedRole);
                 
-                // Redirect based on role
-                if ("BUYER".equals(selectedRole)) {
-                    return "/buyer/properties?faces-redirect=true";
-                } else {
-                    return "/seller/my-properties?faces-redirect=true";
+                // Use sendRedirect directly on HttpServletResponse to bypass JSF entirely
+                try {
+                    jakarta.servlet.http.HttpServletResponse response = 
+                        (jakarta.servlet.http.HttpServletResponse) context.getExternalContext().getResponse();
+                    String contextPath = context.getExternalContext().getRequestContextPath();
+                    String redirectUrl = "BUYER".equals(selectedRole) 
+                        ? contextPath + "/buyer/properties.xhtml" 
+                        : contextPath + "/seller/my-properties.xhtml";
+                    response.sendRedirect(redirectUrl);
+                    context.responseComplete();
+                } catch (java.io.IOException e) {
+                    addMessage(FacesMessage.SEVERITY_ERROR, "Error", "Redirect failed: " + e.getMessage());
                 }
+                return null;
             } else if (emailFound) {
-                setError("Incorrect password. Please try again.");
-                return "/login?faces-redirect=true";
+                addMessage(FacesMessage.SEVERITY_ERROR, "Error", "Incorrect password. Please try again.");
+                return null;
             } else {
-                setError("No account found with this email address.");
-                return "/login?faces-redirect=true";
+                addMessage(FacesMessage.SEVERITY_ERROR, "Error", "No account found with this email address.");
+                return null;
             }
             
         } catch (Exception e) {
-            setError("Login failed: " + e.getMessage());
-            return "/login?faces-redirect=true";
+            addMessage(FacesMessage.SEVERITY_ERROR, "Error", "Login failed: " + e.getMessage());
+            return null;
         }
     }
     
-    private void setError(String message) {
-        FacesContext.getCurrentInstance().getExternalContext().getFlash().put("loginError", message);
+    private void addMessage(FacesMessage.Severity severity, String summary, String detail) {
+        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(severity, summary, detail));
     }
     
     public String logout() {
         sessionBean.logout();
-        // Clear HTTP session
-        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("user");
-        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("userRole");
-        FacesContext.getCurrentInstance().getExternalContext().invalidateSession();
-        return "/index?faces-redirect=true";
+        FacesContext context = FacesContext.getCurrentInstance();
+        
+        // Invalidate session
+        context.getExternalContext().invalidateSession();
+        
+        // Use sendRedirect directly on HttpServletResponse
+        try {
+            jakarta.servlet.http.HttpServletResponse response = 
+                (jakarta.servlet.http.HttpServletResponse) context.getExternalContext().getResponse();
+            response.sendRedirect(context.getExternalContext().getRequestContextPath() + "/index.xhtml");
+            context.responseComplete();
+        } catch (java.io.IOException e) {
+            return "/index";
+        }
+        return null;
     }
     
     // Getters and Setters

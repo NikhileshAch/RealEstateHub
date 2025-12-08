@@ -1,0 +1,2 @@
+create-jdbc-connection-pool --datasourceclassname com.mysql.cj.jdbc.MysqlDataSource --restype javax.sql.DataSource --property user=realestate:password=realestate123:serverName=mysql:portNumber=3306:databaseName=realestatehub:useSSL=false:allowPublicKeyRetrieval=true:serverTimezone=UTC RealEstateHubPool
+create-jdbc-resource --connectionpoolid RealEstateHubPool jdbc/RealEstateHubDS

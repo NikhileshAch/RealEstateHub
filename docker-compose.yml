@@ -30,6 +30,7 @@ services:
       ADMIN_USER: "admin"
       ADMIN_PASSWORD: "admin"
       BREVO_API_KEY: "${BREVO_API_KEY}"
+      POSTBOOT_COMMANDS: "/opt/payara/appserver/glassfish/domains/domain1/config/post-boot-commands.asadmin"
     ports:
       - "8080:8080"   #apps
       - "4848:4848"   #admin console
@@ -39,6 +40,8 @@ services:
       - ./WebApplication/target/WebApplication-1.0-SNAPSHOT.war:/opt/payara/appserver/glassfish/domains/domain1/autodeploy/WebApplication-1.0-SNAPSHOT.war
       # MySQL JDBC Driver
       - ./mysql-connector-j-8.2.0.jar:/opt/payara/appserver/glassfish/domains/domain1/lib/mysql-connector-j-8.2.0.jar
+      # Payara post-boot configuration
+      - ./payara-config/post-boot-commands.asadmin:/opt/payara/appserver/glassfish/domains/domain1/config/post-boot-commands.asadmin
 
 volumes:
   mysql_data:
