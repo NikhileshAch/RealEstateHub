@@ -20,6 +20,15 @@
             padding: 25px;
             text-align: center;
             color: white;
+            position: relative;
+        }
+        .register-header .logo-img {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            height: 45px;
+            width: auto;
+            border-radius: 8px;
         }
         .register-header h1 {
             margin: 0;
@@ -83,6 +92,7 @@
 <h:body>
     <div class="register-card">
         <div class="register-header">
+            <h:graphicImage name="images/logo.jpeg" alt="Logo" styleClass="logo-img"/>
             <h1>Create Account</h1>
             <p>Join RealEstateHub today</p>
         </div>
