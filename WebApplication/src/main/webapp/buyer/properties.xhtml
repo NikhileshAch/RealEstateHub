@@ -165,13 +165,21 @@
             </p:panel>
 
             <!-- Properties DataTable with PrimeFaces -->
-            <p:panel id="propertiesPanel" header="Available Properties (#{propertyBean.filteredProperties.size()})">
+            <p:panel id="propertiesPanel">
+                <f:facet name="header">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span>Available Properties (#{propertyBean.filteredProperties.size()})</span>
+                        <p:commandButton value="Refresh" icon="pi pi-refresh" 
+                                       update="propertiesPanel" 
+                                       styleClass="ui-button-rounded ui-button-sm"/>
+                    </div>
+                </f:facet>
                 <p:dataTable id="propertiesTable" value="#{propertyBean.filteredProperties}" var="property"
                     emptyMessage="No properties found matching your criteria." rowHover="true" stripedRows="true"
                     resizableColumns="true" reflow="true">
 
-                    <p:column headerText="Location">
-                        <h:outputText value="#{property.location}" />
+                    <p:column headerText="Location" style="min-width: 250px; max-width: 350px;">
+                        <h:outputText value="#{property.location}" style="white-space: normal; word-wrap: break-word;" />
                     </p:column>
 
                     <p:column headerText="Description" style="max-width: 200px;">
