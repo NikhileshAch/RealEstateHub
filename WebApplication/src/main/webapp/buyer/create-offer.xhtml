@@ -24,6 +24,7 @@
         .offer-header h1 {
             margin: 0;
             font-size: 1.8rem;
+            color: #D4AF37;
         }
         .offer-header p {
             margin: 10px 0 0;
@@ -124,7 +125,8 @@
                     
                     <div class="offer-actions">
                         <p:commandButton value="Submit Offer" action="#{offerBean.createOffer()}" 
-                                       icon="pi pi-send" styleClass="ui-button-success"/>
+                                       icon="pi pi-send" 
+                                       style="background-color: #D4AF37; border-color: #D4AF37; color: white;"/>
                         <p:commandButton value="Cancel" action="/buyer/properties?faces-redirect=true" 
                                        immediate="true" icon="pi pi-times" styleClass="ui-button-secondary"/>
                     </div>
